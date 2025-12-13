@@ -4,6 +4,7 @@ import Register from './pages/Register'
 import AdminDashboard from './pages/AdminDashboard'
 import CustomerDashboard from './pages/CustomerDashboard'
 import Unauthorized from './pages/Unauthorized'
+import ProductsPage from './pages/ProductsPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import { useAuth } from './contexts/AuthContext'
 import { authService } from './services/authService'
@@ -143,6 +144,16 @@ function App() {
             element={
               <ProtectedRoute requireAdmin>
                 <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+          
+          {/* Admin Products route */}
+          <Route
+            path="/admin/products"
+            element={
+              <ProtectedRoute requireAdmin>
+                <ProductsPage />
               </ProtectedRoute>
             }
           />

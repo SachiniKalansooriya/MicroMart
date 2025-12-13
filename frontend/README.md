@@ -1,0 +1,215 @@
+# MicroMart Frontend
+
+React + TypeScript + Vite + Tailwind CSS frontend for MicroMart e-commerce platform with JWT authentication.
+
+## Features
+
+- ? Login / Register pages
+- ? Protected routes (Dashboard)
+- ? JWT token authentication
+- ? Axios API integration
+- ? Context API for global auth state
+- ? TypeScript for type safety
+- ? **Tailwind CSS for styling**
+
+## Setup
+
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+2. **Configure API URL:**
+   
+   Edit `.env` file and set your backend URL:
+   ```
+   VITE_API_URL=https://localhost:7040
+   ```
+
+3. **Run development server:**
+   ```bash
+   npm run dev
+   ```
+
+   The app will be available at `http://localhost:5173`
+
+## Project Structure
+
+```
+src/
+??? components/
+?   ??? PrivateRoute.tsx       # Protected route wrapper
+??? contexts/
+?   ??? AuthContext.tsx        # Global auth state management
+??? pages/
+?   ??? Login.tsx              # Login page (with Tailwind)
+?   ??? Register.tsx           # Registration page (with Tailwind)
+?   ??? Dashboard.tsx          # Protected dashboard (with Tailwind)
+??? services/
+?   ??? api.ts                 # Axios instance with interceptors
+?   ??? authService.ts         # Authentication API calls
+??? App.tsx                    # Main app component with routing (Tailwind)
+??? main.tsx                   # App entry point
+??? index.css                  # Tailwind CSS directives
+```
+
+## Tailwind CSS
+
+The project uses **Tailwind CSS v4** with the new PostCSS plugin (`@tailwindcss/postcss`).
+
+### Configuration Files
+
+- `tailwind.config.js` - Tailwind configuration
+- `postcss.config.js` - PostCSS configuration with Tailwind plugin
+- `src/index.css` - Tailwind directives (`@tailwind base`, `@tailwind components`, `@tailwind utilities`)
+
+### Customization
+
+You can customize colors, fonts, and other design tokens in `tailwind.config.js`:
+
+```js
+export default {
+  theme: {
+    extend: {
+      colors: {
+        primary: '#646cff',
+        // Add your custom colors
+      },
+    },
+  },
+}
+```
+
+## API Integration
+
+The frontend expects the following backend endpoints:
+
+### Authentication Endpoints
+
+**POST** `/api/auth/register`
+```json
+Request:
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "password123"
+}
+
+Response:
+{
+  "token": "jwt_token_here",
+  "user": {
+    "id": "user_id",
+    "name": "John Doe",
+    "email": "john@example.com"
+  }
+}
+```
+
+**POST** `/api/auth/login`
+```json
+Request:
+{
+  "email": "john@example.com",
+  "password": "password123"
+}
+
+Response:
+{
+  "token": "jwt_token_here",
+  "user": {
+    "id": "user_id",
+    "name": "John Doe",
+    "email": "john@example.com"
+  }
+}
+```
+
+**GET** `/api/auth/me` (requires Bearer token)
+```json
+Response:
+{
+  "id": "user_id",
+  "name": "John Doe",
+  "email": "john@example.com"
+}
+```
+
+## Authentication Flow
+
+1. User registers or logs in
+2. Backend returns JWT token + user data
+3. Token is stored in `localStorage`
+4. Axios automatically attaches token to all requests via interceptor
+5. Protected routes check for user in AuthContext
+6. Logout clears token and user data
+
+## Security Notes
+
+?? **Current Implementation:**
+- JWT stored in `localStorage` (vulnerable to XSS)
+- Token attached via `Authorization: Bearer <token>` header
+
+?? **Production Recommendations:**
+- Use httpOnly cookies for token storage
+- Implement refresh token mechanism
+- Add CSRF protection
+- Enable CORS properly on backend
+- Use HTTPS only
+
+## Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+
+## Tech Stack
+
+- **React 18** - UI library
+- **TypeScript** - Type safety
+- **Vite** - Build tool
+- **React Router** - Routing
+- **Axios** - HTTP client
+- **Context API** - State management
+- **Tailwind CSS v4** - Utility-first CSS framework
+
+## Next Steps
+
+To complete the authentication system, you need to:
+
+1. **Backend Setup:**
+   - Create authentication API endpoints in your .NET backend
+   - Implement JWT token generation
+   - Add user registration/login logic
+   - Configure CORS to allow frontend origin
+
+2. **Update API URL:**
+   - Change `VITE_API_URL` in `.env` to match your backend URL
+
+3. **Test the flow:**
+   - Register a new user
+   - Login with credentials
+   - Access protected dashboard
+   - Logout and verify redirect to login
+
+## Troubleshooting
+
+**CORS errors:**
+- Ensure backend allows `http://localhost:5173` origin
+- Check backend CORS configuration
+
+**API connection failed:**
+- Verify backend is running
+- Check `VITE_API_URL` in `.env`
+- Verify endpoint paths match backend routes
+
+**Token not sent:**
+- Check browser DevTools > Application > Local Storage
+- Verify token is stored
+- Check Network tab for Authorization header
+
+**Tailwind styles not applying:**
+- Ensure `npm install` was run
+- Check that `index.css` is imported in `main.tsx`
+- Verify Tailwind config paths include your components
+- Run `npm run dev` again

@@ -1,0 +1,66 @@
+import { authService } from './authService';
+
+// TODO: Replace with your actual Payment API Gateway URL
+const API_BASE_URL = 'https://kpk440vdkf.execute-api.eu-north-1.amazonaws.com/prod';
+
+interface CheckoutSessionResponse {
+  sessionId: string;
+  url: string;
+}
+
+interface Order {
+  orderId: string;
+  productId: string;
+  quantity: number;
+  totalAmount: number;
+  paymentStatus: string;
+  createdAt: string;
+}
+
+interface OrdersResponse {
+  orders: Order[];
+}
+
+interface FetchOptions extends RequestInit {
+  headers?: Record<string, string>;
+}
+
+const authFetch = async <T = any>(url: string, options: FetchOptions = {}): Promise<T> => {
+  const token = authService.getToken();
+  
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+      ...options.headers
+    }
+  });
+
+  return response.json();
+};
+
+export const paymentService = {
+  async createCheckoutSession(productId: string, quantity: number = 1): Promise<CheckoutSessionResponse> {
+    try {
+      const result = await authFetch<CheckoutSessionResponse>(`${API_BASE_URL}/payment/create-checkout`, {
+        method: 'POST',
+        body: JSON.stringify({ productId, quantity })
+      });
+      return result;
+    } catch (error) {
+      console.error('Checkout error:', error);
+      throw error instanceof Error ? error : new Error('Failed to create checkout session');
+    }
+  },
+
+  async getOrders(): Promise<Order[]> {
+    try {
+      const result = await authFetch<OrdersResponse>(`${API_BASE_URL}/orders`);
+      return result.orders;
+    } catch (error) {
+      console.error('Get orders error:', error);
+      throw error instanceof Error ? error : new Error('Failed to fetch orders');
+    }
+  }
+};

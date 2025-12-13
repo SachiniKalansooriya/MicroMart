@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "klqThGcEyIc=",
+  "dgSpecHash": "SD3gWZjaRRI=",
   "success": true,
   "projectFilePath": "D:\\MicroMart\\lambda\\MicroMart.Auth.Signup\\src\\MicroMart.Auth.Signup\\MicroMart.Auth.Signup.csproj",
   "expectedPackageFiles": [
@@ -10,6 +10,8 @@
     "C:\\Users\\ASUS\\.nuget\\packages\\awssdk.core\\4.0.3.6\\awssdk.core.4.0.3.6.nupkg.sha512",
     "C:\\Users\\ASUS\\.nuget\\packages\\awssdk.dynamodbv2\\4.0.10.4\\awssdk.dynamodbv2.4.0.10.4.nupkg.sha512",
     "C:\\Users\\ASUS\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
+    "C:\\Users\\ASUS\\.nuget\\packages\\microsoft.netcore.app.runtime.linux-x64\\8.0.20\\microsoft.netcore.app.runtime.linux-x64.8.0.20.nupkg.sha512",
+    "C:\\Users\\ASUS\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.linux-x64\\8.0.20\\microsoft.aspnetcore.app.runtime.linux-x64.8.0.20.nupkg.sha512",
     "C:\\Users\\ASUS\\.nuget\\packages\\microsoft.netcore.app.crossgen2.win-x64\\8.0.20\\microsoft.netcore.app.crossgen2.win-x64.8.0.20.nupkg.sha512"
   ],
   "logs": []

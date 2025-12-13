@@ -1,0 +1,10 @@
+D:\MicroMart\lambda\MicroMart.Auth.Signup\src\MicroMart.Auth.Signup\bin\Release\net8.0\publish\MicroMart.Auth.Signup.deps.json
+D:\MicroMart\lambda\MicroMart.Auth.Signup\src\MicroMart.Auth.Signup\bin\Release\net8.0\publish\MicroMart.Auth.Signup.runtimeconfig.json
+D:\MicroMart\lambda\MicroMart.Auth.Signup\src\MicroMart.Auth.Signup\bin\Release\net8.0\publish\MicroMart.Auth.Signup.pdb
+D:\MicroMart\lambda\MicroMart.Auth.Signup\src\MicroMart.Auth.Signup\bin\Release\net8.0\publish\Amazon.Lambda.APIGatewayEvents.dll
+D:\MicroMart\lambda\MicroMart.Auth.Signup\src\MicroMart.Auth.Signup\bin\Release\net8.0\publish\Amazon.Lambda.Core.dll
+D:\MicroMart\lambda\MicroMart.Auth.Signup\src\MicroMart.Auth.Signup\bin\Release\net8.0\publish\Amazon.Lambda.Serialization.SystemTextJson.dll
+D:\MicroMart\lambda\MicroMart.Auth.Signup\src\MicroMart.Auth.Signup\bin\Release\net8.0\publish\AWSSDK.Core.dll
+D:\MicroMart\lambda\MicroMart.Auth.Signup\src\MicroMart.Auth.Signup\bin\Release\net8.0\publish\AWSSDK.DynamoDBv2.dll
+D:\MicroMart\lambda\MicroMart.Auth.Signup\src\MicroMart.Auth.Signup\bin\Release\net8.0\publish\BCrypt.Net-Next.dll
+D:\MicroMart\lambda\MicroMart.Auth.Signup\src\MicroMart.Auth.Signup\bin\Release\net8.0\publish\MicroMart.Auth.Signup.dll

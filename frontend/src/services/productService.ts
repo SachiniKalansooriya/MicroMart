@@ -11,6 +11,7 @@ export interface Product {
   category: string;
   stock: number;
   imageUrl?: string;
+  colors?: string[];
   createdAt?: string;
   updatedAt?: string;
 }
@@ -22,8 +23,8 @@ export interface CreateProductData {
   category: string;
   stock: number;
   imageUrl?: string;
+  colors?: string[];
 }
-
 export interface UpdateProductData {
   name?: string;
   description?: string;
@@ -31,6 +32,7 @@ export interface UpdateProductData {
   category?: string;
   stock?: number;
   imageUrl?: string;
+  colors?: string[];
 }
 
 export interface ProductResponse {

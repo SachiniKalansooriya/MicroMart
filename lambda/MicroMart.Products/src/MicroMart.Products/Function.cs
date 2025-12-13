@@ -50,10 +50,23 @@ public class Function
             
             context.Logger.LogInformation($"Processed path: {path}");
 
+            // Handle OPTIONS for CORS preflight
+            if (method == "OPTIONS")
+            {
+                return CreateResponse(200, new { message = "CORS preflight" });
+            }
+
             // GET /products - All authenticated users
             if (method == "GET" && path == "/products")
             {
                 return await GetAllProducts(context);
+            }
+
+            // GET /products/{id} - All authenticated users
+            if (method == "GET" && path.StartsWith("/products/") && path.Split('/').Length == 3)
+            {
+                var productId = path.Split('/')[2];
+                return await GetProduct(productId, context);
             }
 
             // POST /products - Admin only
@@ -112,10 +125,47 @@ public class Function
             category = doc.ContainsKey("category") ? doc["category"].AsString() : "",
             stock = doc.ContainsKey("stock") ? doc["stock"].AsInt() : 0,
             imageUrl = doc.ContainsKey("imageUrl") ? doc["imageUrl"].AsString() : "",
+            colors = doc.ContainsKey("colors") ? doc["colors"].AsListOfString() : new List<string>(),
             createdAt = doc.ContainsKey("createdAt") ? doc["createdAt"].AsString() : ""
         }).ToList();
 
         return CreateResponse(200, new { products = productList });
+    }
+
+    private async Task<APIGatewayHttpApiV2ProxyResponse> GetProduct(string productId, ILambdaContext context)
+    {
+        var table = Table.LoadTable(_dynamoClient, TABLE_NAME);
+        
+        try
+        {
+            var product = await table.GetItemAsync(productId);
+            
+            if (product == null)
+            {
+                return CreateResponse(404, new { error = "Product not found" });
+            }
+
+            var productData = new
+            {
+                productId = product["productId"].AsString(),
+                name = product.ContainsKey("name") ? product["name"].AsString() : "",
+                price = product.ContainsKey("price") ? product["price"].AsDecimal() : 0,
+                description = product.ContainsKey("description") ? product["description"].AsString() : "",
+                category = product.ContainsKey("category") ? product["category"].AsString() : "",
+                stock = product.ContainsKey("stock") ? product["stock"].AsInt() : 0,
+                imageUrl = product.ContainsKey("imageUrl") ? product["imageUrl"].AsString() : "",
+                colors = product.ContainsKey("colors") ? product["colors"].AsListOfString() : new List<string>(),
+                createdAt = product.ContainsKey("createdAt") ? product["createdAt"].AsString() : "",
+                updatedAt = product.ContainsKey("updatedAt") ? product["updatedAt"].AsString() : ""
+            };
+
+            return CreateResponse(200, new { product = productData });
+        }
+        catch (Exception ex)
+        {
+            context.Logger.LogError($"Error getting product {productId}: {ex.Message}");
+            return CreateResponse(404, new { error = "Product not found" });
+        }
     }
 
     private async Task<APIGatewayHttpApiV2ProxyResponse> CreateProduct(
@@ -148,6 +198,11 @@ public class Function
             ["createdBy"] = userId,
             ["createdAt"] = DateTime.UtcNow.ToString("o")
         };
+
+        if (productRequest.Colors != null && productRequest.Colors.Count > 0)
+        {
+            product["colors"] = productRequest.Colors;
+        }
 
         await table.PutItemAsync(product);
 
@@ -187,6 +242,8 @@ public class Function
             updates["category"] = updateRequest.Category;
         if (updateRequest?.Stock.HasValue == true)
             updates["stock"] = updateRequest.Stock.Value;
+        if (updateRequest?.Colors != null && updateRequest.Colors.Count > 0)
+            updates["colors"] = updateRequest.Colors;
 
         updates["updatedAt"] = DateTime.UtcNow.ToString("o");
 
@@ -234,4 +291,5 @@ public class ProductRequest
     public string Category { get; set; }
     public int? Stock { get; set; }
     public string ImageUrl { get; set; }
+    public List<string> Colors { get; set; }
 }

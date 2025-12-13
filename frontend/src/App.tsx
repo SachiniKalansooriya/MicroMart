@@ -3,6 +3,7 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import AdminDashboard from './pages/AdminDashboard'
 import CustomerDashboard from './pages/CustomerDashboard'
+import ProductDetail from './pages/ProductDetail'
 import Unauthorized from './pages/Unauthorized'
 import ProductsPage from './pages/ProductsPage'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -164,6 +165,16 @@ function App() {
             element={
               <ProtectedRoute requireCustomer>
                 <CustomerDashboard />
+              </ProtectedRoute>
+            }
+          />
+          
+          {/* Product Detail route */}
+          <Route
+            path="/product/:id"
+            element={
+              <ProtectedRoute requireCustomer>
+                <ProductDetail />
               </ProtectedRoute>
             }
           />

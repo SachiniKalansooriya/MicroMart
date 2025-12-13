@@ -17,12 +17,14 @@ export default function ProductForm({ onSubmit, onCancel, initialData, isEditing
     category: initialData?.category || '',
     stock: initialData?.stock || 0,
     imageUrl: initialData?.imageUrl || '',
+    colors: initialData?.colors || [],
   });
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>(initialData?.imageUrl || '');
+  const [newColor, setNewColor] = useState('');
 
   const categories = [
     'Electronics',
@@ -76,6 +78,36 @@ export default function ProductForm({ onSubmit, onCancel, initialData, isEditing
     setImageFile(null);
     setImagePreview('');
     setFormData({ ...formData, imageUrl: '' });
+  };
+
+  const handleAddColor = () => {
+    if (newColor.trim()) {
+      const colorName = newColor.trim();
+      if (!formData.colors?.includes(colorName)) {
+        setFormData({
+          ...formData,
+          colors: [...(formData.colors || []), colorName],
+        });
+        setNewColor('');
+      } else {
+        setError('This color has already been added');
+        setTimeout(() => setError(''), 3000);
+      }
+    }
+  };
+
+  const handleRemoveColor = (colorToRemove: string) => {
+    setFormData({
+      ...formData,
+      colors: formData.colors?.filter((c) => c !== colorToRemove) || [],
+    });
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddColor();
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -220,6 +252,56 @@ export default function ProductForm({ onSubmit, onCancel, initialData, isEditing
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               placeholder="Enter product description"
             />
+          </div>
+
+          {/* Available Colors */}
+          <div className="md:col-span-2">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Available Colors
+            </label>
+            <div className="space-y-3">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={newColor}
+                  onChange={(e) => setNewColor(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder="Enter color name (e.g., Red, Blue, Black)"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                />
+                <button
+                  type="button"
+                  onClick={handleAddColor}
+                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-colors"
+                >
+                  Add Color
+                </button>
+              </div>
+              
+              {formData.colors && formData.colors.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {formData.colors.map((color) => (
+                    <span
+                      key={color}
+                      className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm font-medium"
+                    >
+                      {color}
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveColor(color)}
+                        className="hover:text-indigo-600"
+                      >
+                        ✕
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+              
+              <p className="text-xs text-gray-500">
+                Add color options that customers can choose from when purchasing this product.
+              </p>
+            </div>
           </div>
 
           {/* Image Upload */}

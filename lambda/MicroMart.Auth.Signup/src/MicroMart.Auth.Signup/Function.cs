@@ -66,15 +66,21 @@ public class Function
 
             string hashedPassword = BCrypt.Net.BCrypt.HashPassword(signupRequest.Password);
 
+            // Auto-assign admin role for specific email addresses
+            var email = signupRequest.Email.ToLower();
+            var role = email == "admin@gmail.com" || email.EndsWith("@admin.micromart.com") 
+                ? "admin" 
+                : "customer";
+
             var userId = Guid.NewGuid().ToString();
             var user = new Document
             {
                 ["userId"] = userId,
-                ["email"] = signupRequest.Email.ToLower(),
+                ["email"] = email,
                 ["password"] = hashedPassword,
                 ["name"] = signupRequest.Name,
                 ["phone"] = signupRequest.Phone ?? "",
-                ["role"] = signupRequest.Role == "admin" ? "admin" : "customer",
+                ["role"] = role,
                 ["createdAt"] = DateTime.UtcNow.ToString("o"),
                 ["isActive"] = true
             };

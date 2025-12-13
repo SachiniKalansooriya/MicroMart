@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MicroMart.Products")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+49a06cbc7e4362719f343aac49c06ba32a9658a3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b2ef990f91da794fa7634266fcc89982ef5b6bf8")]
 [assembly: System.Reflection.AssemblyProductAttribute("MicroMart.Products")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MicroMart.Products")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

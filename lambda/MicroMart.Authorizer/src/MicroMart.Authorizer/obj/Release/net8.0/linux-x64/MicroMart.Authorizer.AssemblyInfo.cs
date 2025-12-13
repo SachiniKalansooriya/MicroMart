@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MicroMart.Authorizer")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4dea1f847646cfb4b7d83e617698b970ffcfb043")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b2ef990f91da794fa7634266fcc89982ef5b6bf8")]
 [assembly: System.Reflection.AssemblyProductAttribute("MicroMart.Authorizer")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MicroMart.Authorizer")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

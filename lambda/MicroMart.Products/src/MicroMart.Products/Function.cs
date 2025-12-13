@@ -27,6 +27,8 @@ public class Function
             context.Logger.LogInformation($"Request: {request.RequestContext.Http.Method} {request.RawPath}");
 
             // Get user context from authorizer
+            context.Logger.LogInformation($"Authorizer data: {JsonSerializer.Serialize(request.RequestContext.Authorizer)}");
+            
             var userRole = request.RequestContext.Authorizer?.Lambda?.ContainsKey("role") == true
                 ? request.RequestContext.Authorizer.Lambda["role"]?.ToString()
                 : null;
@@ -35,7 +37,7 @@ public class Function
                 ? request.RequestContext.Authorizer.Lambda["userId"]?.ToString()
                 : null;
 
-            context.Logger.LogInformation($"User Role: {userRole}, User ID: {userId}");
+            context.Logger.LogInformation($"User Role: '{userRole}', User ID: '{userId}'");
 
             var method = request.RequestContext.Http.Method;
             var path = request.RawPath ?? request.RequestContext.Http.Path;
@@ -109,6 +111,7 @@ public class Function
             description = doc.ContainsKey("description") ? doc["description"].AsString() : "",
             category = doc.ContainsKey("category") ? doc["category"].AsString() : "",
             stock = doc.ContainsKey("stock") ? doc["stock"].AsInt() : 0,
+            imageUrl = doc.ContainsKey("imageUrl") ? doc["imageUrl"].AsString() : "",
             createdAt = doc.ContainsKey("createdAt") ? doc["createdAt"].AsString() : ""
         }).ToList();
 
@@ -141,6 +144,7 @@ public class Function
             ["description"] = productRequest.Description ?? "",
             ["category"] = productRequest.Category ?? "",
             ["stock"] = productRequest.Stock ?? 0,
+            ["imageUrl"] = productRequest.ImageUrl ?? "",
             ["createdBy"] = userId,
             ["createdAt"] = DateTime.UtcNow.ToString("o")
         };
@@ -229,4 +233,5 @@ public class ProductRequest
     public string Description { get; set; }
     public string Category { get; set; }
     public int? Stock { get; set; }
+    public string ImageUrl { get; set; }
 }

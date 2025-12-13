@@ -1,12 +1,27 @@
-import { Routes, Route, Link } from 'react-router-dom'
+import { Routes, Route, Link, Navigate } from 'react-router-dom'
 import Login from './pages/Login'
 import Register from './pages/Register'
-import Dashboard from './pages/Dashboard'
-import PrivateRoute from './components/PrivateRoute'
+import AdminDashboard from './pages/AdminDashboard'
+import CustomerDashboard from './pages/CustomerDashboard'
+import Unauthorized from './pages/Unauthorized'
+import ProtectedRoute from './components/ProtectedRoute'
 import { useAuth } from './contexts/AuthContext'
+import { authService } from './services/authService'
 
 function App() {
   const { user, logout } = useAuth()
+
+  // Dashboard redirect based on role
+  const DashboardRedirect = () => {
+    const currentUser = authService.getUser();
+    if (!currentUser) {
+      return <Navigate to="/login" replace />;
+    }
+    if (currentUser.role === 'admin') {
+      return <Navigate to="/admin" replace />;
+    }
+    return <Navigate to="/customer" replace />;
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -15,7 +30,7 @@ function App() {
           <div className="flex justify-between items-center h-16">
             <div className="flex-shrink-0">
               <Link to="/" className="text-2xl font-bold hover:text-indigo-100 transition-colors">
-                ?? MicroMart
+                🛒 MicroMart
               </Link>
             </div>
             <div className="flex items-center space-x-6">
@@ -37,6 +52,19 @@ function App() {
                   <Link to="/dashboard" className="hover:text-indigo-100 transition-colors font-medium">
                     Dashboard
                   </Link>
+                  {user.role === 'admin' && (
+                    <Link to="/admin" className="hover:text-indigo-100 transition-colors font-medium">
+                      Admin
+                    </Link>
+                  )}
+                  {user.role === 'customer' && (
+                    <Link to="/customer" className="hover:text-indigo-100 transition-colors font-medium">
+                      Shop
+                    </Link>
+                  )}
+                  <span className="text-indigo-200 text-sm">
+                    ({user.role})
+                  </span>
                   <button
                     onClick={logout}
                     className="bg-indigo-700 hover:bg-indigo-800 px-4 py-2 rounded-md font-medium transition-colors"
@@ -61,9 +89,9 @@ function App() {
                     Welcome to MicroMart
                   </h1>
                   <p className="text-xl text-gray-600 mb-8">
-                    Your microservices e-commerce platform
+                    Your microservices e-commerce platform with role-based authentication
                   </p>
-                  {!user && (
+                  {!user ? (
                     <div className="flex gap-4 justify-center">
                       <Link
                         to="/login"
@@ -78,6 +106,18 @@ function App() {
                         Register
                       </Link>
                     </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <p className="text-lg text-gray-700">
+                        Welcome back, <span className="font-semibold text-indigo-600">{user.name}</span>!
+                      </p>
+                      <Link
+                        to="/dashboard"
+                        className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+                      >
+                        Go to Dashboard
+                      </Link>
+                    </div>
                   )}
                 </div>
               </div>
@@ -85,12 +125,35 @@ function App() {
           />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/unauthorized" element={<Unauthorized />} />
+          
+          {/* Dashboard redirect based on role */}
           <Route
             path="/dashboard"
             element={
-              <PrivateRoute>
-                <Dashboard />
-              </PrivateRoute>
+              <ProtectedRoute>
+                <DashboardRedirect />
+              </ProtectedRoute>
+            }
+          />
+          
+          {/* Admin-only route */}
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute requireAdmin>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+          
+          {/* Customer-only route */}
+          <Route
+            path="/customer"
+            element={
+              <ProtectedRoute requireCustomer>
+                <CustomerDashboard />
+              </ProtectedRoute>
             }
           />
         </Routes>

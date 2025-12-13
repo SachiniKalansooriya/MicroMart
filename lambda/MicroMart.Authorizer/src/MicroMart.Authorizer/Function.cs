@@ -1,6 +1,7 @@
 using Amazon.Lambda.Core;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -61,11 +62,22 @@ public class Function
 
             var principal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
 
-            // Extract claims
-            var userId = principal.FindFirst("userId")?.Value ?? "";
-            var email = principal.FindFirst("email")?.Value ?? "";
-            var role = principal.FindFirst("role")?.Value ?? "";
+            // Extract claims - try different claim types
+            var userId = principal.FindFirst("userId")?.Value 
+                ?? principal.FindFirst(ClaimTypes.NameIdentifier)?.Value 
+                ?? "";
+                
+            var email = principal.FindFirst("email")?.Value 
+                ?? principal.FindFirst(ClaimTypes.Email)?.Value 
+                ?? "";
+                
+            var role = principal.FindFirst("role")?.Value 
+                ?? principal.FindFirst(ClaimTypes.Role)?.Value 
+                ?? "";
 
+            // Log all claims for debugging
+            context.Logger.LogInformation($"All claims: {string.Join(", ", principal.Claims.Select(c => $"{c.Type}={c.Value}"))}");
+            context.Logger.LogInformation($"Extracted claims - userId: '{userId}', email: '{email}', role: '{role}'");
             context.Logger.LogInformation($"Token valid - User: {userId}, Role: {role}");
 
             return CreateAllowResponse(userId, email, role);

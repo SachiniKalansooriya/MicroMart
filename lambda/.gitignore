@@ -1,0 +1,67 @@
+# Build outputs
+**/bin/
+**/obj/
+
+# Lambda deployment packages
+*.zip
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio cache/options
+.vs/
+.vscode/
+
+# ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# NuGet Packages
+*.nupkg
+*.snupkg
+**/packages/*
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+*.pdb
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# AWS Lambda tools
+publish/
+**/publish/
+
+# Mac files
+.DS_Store
+
+# Response files (if any test responses)
+response.json

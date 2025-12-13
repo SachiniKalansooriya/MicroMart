@@ -1,9 +1,0 @@
-D:\MicroMart\lambda\MicroMart.Products\src\MicroMart.Products\bin\Release\net8.0\publish\MicroMart.Products.deps.json
-D:\MicroMart\lambda\MicroMart.Products\src\MicroMart.Products\bin\Release\net8.0\publish\MicroMart.Products.runtimeconfig.json
-D:\MicroMart\lambda\MicroMart.Products\src\MicroMart.Products\bin\Release\net8.0\publish\MicroMart.Products.pdb
-D:\MicroMart\lambda\MicroMart.Products\src\MicroMart.Products\bin\Release\net8.0\publish\Amazon.Lambda.APIGatewayEvents.dll
-D:\MicroMart\lambda\MicroMart.Products\src\MicroMart.Products\bin\Release\net8.0\publish\Amazon.Lambda.Core.dll
-D:\MicroMart\lambda\MicroMart.Products\src\MicroMart.Products\bin\Release\net8.0\publish\Amazon.Lambda.Serialization.SystemTextJson.dll
-D:\MicroMart\lambda\MicroMart.Products\src\MicroMart.Products\bin\Release\net8.0\publish\AWSSDK.Core.dll
-D:\MicroMart\lambda\MicroMart.Products\src\MicroMart.Products\bin\Release\net8.0\publish\AWSSDK.DynamoDBv2.dll
-D:\MicroMart\lambda\MicroMart.Products\src\MicroMart.Products\bin\Release\net8.0\publish\MicroMart.Products.dll

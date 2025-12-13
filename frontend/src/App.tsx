@@ -3,7 +3,9 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import AdminDashboard from './pages/AdminDashboard'
 import CustomerDashboard from './pages/CustomerDashboard'
+import ProductDetail from './pages/ProductDetail'
 import Unauthorized from './pages/Unauthorized'
+import ProductsPage from './pages/ProductsPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import { useAuth } from './contexts/AuthContext'
 import { authService } from './services/authService'
@@ -147,12 +149,32 @@ function App() {
             }
           />
           
+          {/* Admin Products route */}
+          <Route
+            path="/admin/products"
+            element={
+              <ProtectedRoute requireAdmin>
+                <ProductsPage />
+              </ProtectedRoute>
+            }
+          />
+          
           {/* Customer-only route */}
           <Route
             path="/customer"
             element={
               <ProtectedRoute requireCustomer>
                 <CustomerDashboard />
+              </ProtectedRoute>
+            }
+          />
+          
+          {/* Product Detail route */}
+          <Route
+            path="/product/:id"
+            element={
+              <ProtectedRoute requireCustomer>
+                <ProductDetail />
               </ProtectedRoute>
             }
           />

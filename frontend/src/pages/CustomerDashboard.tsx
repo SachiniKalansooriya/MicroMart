@@ -1,9 +1,11 @@
 import { useAuth } from '../contexts/AuthContext';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import productService, { type Product } from '../services/productService';
 
 export default function CustomerDashboard() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -79,7 +81,11 @@ export default function CustomerDashboard() {
               </div>
             ) : (
               products.map((product) => (
-                <div key={product.productId} className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                <div 
+                  key={product.productId} 
+                  className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+                  onClick={() => navigate(`/product/${product.productId}`)}
+                >
                   <div className="h-48 bg-gray-100 flex items-center justify-center">
                     {product.imageUrl ? (
                       <img src={product.imageUrl} alt={product.name} className="h-full w-full object-cover" />
@@ -99,11 +105,27 @@ export default function CustomerDashboard() {
                         {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
                       </span>
                     </div>
+                    {product.colors && product.colors.length > 0 && (
+                      <div className="mt-3 flex flex-wrap gap-1">
+                        {product.colors.slice(0, 3).map((color) => (
+                          <span key={color} className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
+                            {color}
+                          </span>
+                        ))}
+                        {product.colors.length > 3 && (
+                          <span className="text-xs text-gray-500">+{product.colors.length - 3} more</span>
+                        )}
+                      </div>
+                    )}
                     <button 
                       disabled={product.stock === 0}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/product/${product.productId}`);
+                      }}
                       className="w-full mt-4 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold py-2 rounded-lg transition-colors"
                     >
-                      {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
+                      {product.stock === 0 ? 'Out of Stock' : 'View Details'}
                     </button>
                   </div>
                 </div>

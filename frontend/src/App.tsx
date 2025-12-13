@@ -4,6 +4,8 @@ import Register from './pages/Register'
 import AdminDashboard from './pages/AdminDashboard'
 import CustomerDashboard from './pages/CustomerDashboard'
 import ProductDetail from './pages/ProductDetail'
+import PaymentSuccess from './pages/PaymentSuccess'
+import PaymentCancel from './pages/PaymentCancel'
 import Unauthorized from './pages/Unauthorized'
 import ProductsPage from './pages/ProductsPage'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -26,50 +28,50 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <nav className="bg-indigo-600 text-white shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+    <div className="flex flex-col min-h-screen bg-gray-50">
+      <nav className="text-white bg-indigo-600 shadow-lg">
+        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
             <div className="flex-shrink-0">
-              <Link to="/" className="text-2xl font-bold hover:text-indigo-100 transition-colors">
+              <Link to="/" className="text-2xl font-bold transition-colors hover:text-indigo-100">
                 🛒 MicroMart
               </Link>
             </div>
             <div className="flex items-center space-x-6">
-              <Link to="/" className="hover:text-indigo-100 transition-colors font-medium">
+              <Link to="/" className="font-medium transition-colors hover:text-indigo-100">
                 Home
               </Link>
               {!user && (
                 <>
-                  <Link to="/login" className="hover:text-indigo-100 transition-colors font-medium">
+                  <Link to="/login" className="font-medium transition-colors hover:text-indigo-100">
                     Login
                   </Link>
-                  <Link to="/register" className="hover:text-indigo-100 transition-colors font-medium">
+                  <Link to="/register" className="font-medium transition-colors hover:text-indigo-100">
                     Register
                   </Link>
                 </>
               )}
               {user && (
                 <>
-                  <Link to="/dashboard" className="hover:text-indigo-100 transition-colors font-medium">
+                  <Link to="/dashboard" className="font-medium transition-colors hover:text-indigo-100">
                     Dashboard
                   </Link>
                   {user.role === 'admin' && (
-                    <Link to="/admin" className="hover:text-indigo-100 transition-colors font-medium">
+                    <Link to="/admin" className="font-medium transition-colors hover:text-indigo-100">
                       Admin
                     </Link>
                   )}
                   {user.role === 'customer' && (
-                    <Link to="/customer" className="hover:text-indigo-100 transition-colors font-medium">
+                    <Link to="/customer" className="font-medium transition-colors hover:text-indigo-100">
                       Shop
                     </Link>
                   )}
-                  <span className="text-indigo-200 text-sm">
+                  <span className="text-sm text-indigo-200">
                     ({user.role})
                   </span>
                   <button
                     onClick={logout}
-                    className="bg-indigo-700 hover:bg-indigo-800 px-4 py-2 rounded-md font-medium transition-colors"
+                    className="px-4 py-2 font-medium transition-colors bg-indigo-700 rounded-md hover:bg-indigo-800"
                   >
                     Logout
                   </button>
@@ -87,23 +89,23 @@ function App() {
             element={
               <div className="min-h-[80vh] flex items-center justify-center px-4">
                 <div className="text-center">
-                  <h1 className="text-5xl font-bold text-gray-900 mb-4">
+                  <h1 className="mb-4 text-5xl font-bold text-gray-900">
                     Welcome to MicroMart
                   </h1>
-                  <p className="text-xl text-gray-600 mb-8">
+                  <p className="mb-8 text-xl text-gray-600">
                     Your microservices e-commerce platform with role-based authentication
                   </p>
                   {!user ? (
-                    <div className="flex gap-4 justify-center">
+                    <div className="flex justify-center gap-4">
                       <Link
                         to="/login"
-                        className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+                        className="px-6 py-3 font-semibold text-white transition-colors bg-indigo-600 rounded-lg hover:bg-indigo-700"
                       >
                         Login
                       </Link>
                       <Link
                         to="/register"
-                        className="bg-white hover:bg-gray-50 text-indigo-600 border-2 border-indigo-600 px-6 py-3 rounded-lg font-semibold transition-colors"
+                        className="px-6 py-3 font-semibold text-indigo-600 transition-colors bg-white border-2 border-indigo-600 rounded-lg hover:bg-gray-50"
                       >
                         Register
                       </Link>
@@ -115,7 +117,7 @@ function App() {
                       </p>
                       <Link
                         to="/dashboard"
-                        className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+                        className="inline-block px-6 py-3 font-semibold text-white transition-colors bg-indigo-600 rounded-lg hover:bg-indigo-700"
                       >
                         Go to Dashboard
                       </Link>
@@ -175,6 +177,26 @@ function App() {
             element={
               <ProtectedRoute requireCustomer>
                 <ProductDetail />
+              </ProtectedRoute>
+            }
+          />
+          
+          {/* Payment Success route */}
+          <Route
+            path="/payment/success"
+            element={
+              <ProtectedRoute>
+                <PaymentSuccess />
+              </ProtectedRoute>
+            }
+          />
+          
+          {/* Payment Cancel route */}
+          <Route
+            path="/payment/cancel"
+            element={
+              <ProtectedRoute>
+                <PaymentCancel />
               </ProtectedRoute>
             }
           />

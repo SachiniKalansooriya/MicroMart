@@ -30,7 +30,21 @@ public class Function
         try
         {
             var method = request.RequestContext.Http.Method;
-            var path = request.RawPath;
+            var path = request.RawPath ?? request.RequestContext.Http.Path;
+            
+            // Remove stage name if present (e.g., /prod/payment/create-checkout -> /payment/create-checkout)
+            if (path.StartsWith("/prod/"))
+            {
+                path = path.Substring(5); // Remove "/prod"
+            }
+            
+            context.Logger.LogInformation($"Method: {method}, Path: {path}");
+
+            // Handle OPTIONS for CORS preflight
+            if (method == "OPTIONS")
+            {
+                return CreateResponse(200, new { message = "CORS preflight" });
+            }
 
             // Get user context
             var userId = request.RequestContext.Authorizer?.Lambda?.ContainsKey("userId") == true
@@ -94,6 +108,11 @@ public class Function
             var productPrice = product["price"].AsDecimal();
             var quantity = checkoutRequest.Quantity ?? 1;
 
+            // Determine the frontend URL from the request origin or use localhost as fallback
+            var origin = request.Headers?.ContainsKey("origin") == true 
+                ? request.Headers["origin"] 
+                : "http://localhost:5173";
+
             // Create Stripe checkout session
             var options = new SessionCreateOptions
             {
@@ -118,11 +137,11 @@ public class Function
                     }
                 },
                 Mode = "payment",
-                SuccessUrl = $"https://your-frontend-url.com/payment/success?session_id={{CHECKOUT_SESSION_ID}}",
-                CancelUrl = "https://your-frontend-url.com/payment/cancel",
+                SuccessUrl = $"{origin}/payment/success?session_id={{CHECKOUT_SESSION_ID}}",
+                CancelUrl = $"{origin}/payment/cancel",
                 Metadata = new Dictionary<string, string>
                 {
-                    { "userId", userId },
+                    { "userId", userId ?? "guest" },
                     { "productId", checkoutRequest.ProductId },
                     { "quantity", quantity.ToString() }
                 }

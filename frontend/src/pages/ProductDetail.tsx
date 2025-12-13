@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import productService, { type Product } from '../services/productService';
+import { paymentService } from '../services/paymentService';
+import { authService } from '../services/authService';
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+  const [processingPayment, setProcessingPayment] = useState(false);
   const [error, setError] = useState('');
   const [selectedColor, setSelectedColor] = useState<string>('');
   const [quantity, setQuantity] = useState(1);
@@ -47,11 +50,38 @@ export default function ProductDetail() {
     alert(`Added ${quantity} ${product.name}${selectedColor ? ` (${selectedColor})` : ''} to cart!`);
   };
 
-  const handleBuyNow = () => {
+  const handleBuyNow = async () => {
     if (!product) return;
     
-    // TODO: Implement buy now functionality
-    alert(`Proceeding to checkout with ${quantity} ${product.name}${selectedColor ? ` (${selectedColor})` : ''}!`);
+    // Check if user is logged in
+    if (!authService.isAuthenticated()) {
+      alert('Please login to purchase');
+      navigate('/login');
+      return;
+    }
+
+    try {
+      setProcessingPayment(true);
+      
+      // Create Stripe checkout session
+      const result = await paymentService.createCheckoutSession(
+        product.productId,
+        quantity
+      );
+
+      if (result.url) {
+        // Redirect to Stripe checkout page
+        window.location.href = result.url;
+      } else {
+        alert('Failed to create checkout session');
+      }
+    } catch (error) {
+      console.error('Buy now error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to process payment. Please try again.';
+      alert(errorMessage);
+    } finally {
+      setProcessingPayment(false);
+    }
   };
 
   if (loading) {
@@ -223,10 +253,10 @@ export default function ProductDetail() {
               </button>
               <button
                 onClick={handleBuyNow}
-                disabled={product.stock === 0}
+                disabled={product.stock === 0 || processingPayment}
                 className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-4 px-8 rounded-lg transition-colors text-lg"
               >
-                ⚡ Buy Now
+                {processingPayment ? '⏳ Processing...' : '⚡ Buy Now'}
               </button>
             </div>
 

@@ -1,0 +1,44 @@
+﻿.dashboard-container {
+  padding: 40px 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.dashboard-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+}
+
+.dashboard-card h2 {
+  margin-top: 0;
+  margin-bottom: 24px;
+  color: #333;
+}
+
+.user-info {
+  background-color: #f5f5f5;
+  padding: 20px;
+  border-radius: 6px;
+  margin-bottom: 24px;
+}
+
+.user-info p {
+  margin: 8px 0;
+  color: #555;
+}
+
+.user-info strong {
+  color: #333;
+  margin-right: 8px;
+}
+
+.dashboard-content {
+  color: #666;
+  line-height: 1.6;
+}
+
+.dashboard-content p {
+  margin: 12px 0;
+}

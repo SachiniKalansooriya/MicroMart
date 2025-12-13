@@ -1,0 +1,30 @@
+﻿import React from 'react';
+import { useAuth } from '../contexts/AuthContext';
+import './Dashboard.css';
+
+export default function Dashboard() {
+  const { user } = useAuth();
+
+  return (
+    <div className="dashboard-container">
+      <div className="dashboard-card">
+        <h2>Welcome to Your Dashboard</h2>
+        <div className="user-info">
+          <p>
+            <strong>Name:</strong> {user?.name}
+          </p>
+          <p>
+            <strong>Email:</strong> {user?.email}
+          </p>
+          <p>
+            <strong>User ID:</strong> {user?.id}
+          </p>
+        </div>
+        <div className="dashboard-content">
+          <p>This is a protected page. You can only see this if you're authenticated.</p>
+          <p>Your JWT token is stored in localStorage and automatically attached to API requests.</p>
+        </div>
+      </div>
+    </div>
+  );
+}

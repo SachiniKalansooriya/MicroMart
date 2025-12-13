@@ -6,17 +6,22 @@ import { ReactNode } from 'react';
 interface ProtectedRouteProps {
   children: ReactNode;
   requireAdmin?: boolean;
+  requireCustomer?: boolean;
 }
 
-export const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps) => {
+export const ProtectedRoute = ({ children, requireAdmin = false, requireCustomer = false }: ProtectedRouteProps) => {
   const isAuthenticated = authService.isAuthenticated();
-  const isAdmin = authService.isAdmin();
+  const user = authService.getUser();
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 
-  if (requireAdmin && !isAdmin) {
+  if (requireAdmin && user?.role !== 'admin') {
+    return <Navigate to="/unauthorized" replace />;
+  }
+
+  if (requireCustomer && user?.role !== 'customer') {
     return <Navigate to="/unauthorized" replace />;
   }
 

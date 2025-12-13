@@ -38,7 +38,15 @@ public class Function
             context.Logger.LogInformation($"User Role: {userRole}, User ID: {userId}");
 
             var method = request.RequestContext.Http.Method;
-            var path = request.RawPath;
+            var path = request.RawPath ?? request.RequestContext.Http.Path;
+            
+            // Remove stage name if present (e.g., /prod/products -> /products)
+            if (path.StartsWith("/prod/"))
+            {
+                path = path.Substring(5); // Remove "/prod"
+            }
+            
+            context.Logger.LogInformation($"Processed path: {path}");
 
             // GET /products - All authenticated users
             if (method == "GET" && path == "/products")

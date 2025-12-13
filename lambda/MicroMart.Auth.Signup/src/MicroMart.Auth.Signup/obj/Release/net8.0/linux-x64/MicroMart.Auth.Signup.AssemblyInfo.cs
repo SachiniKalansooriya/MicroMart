@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MicroMart.Auth.Signup")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a710d1e5b876bac33385a958a481ea8707779c99")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4dea1f847646cfb4b7d83e617698b970ffcfb043")]
 [assembly: System.Reflection.AssemblyProductAttribute("MicroMart.Auth.Signup")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MicroMart.Auth.Signup")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

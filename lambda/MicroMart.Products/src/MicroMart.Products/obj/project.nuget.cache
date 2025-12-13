@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "dgSpecHash": "i2wa9aaCp04=",
+  "success": true,
+  "projectFilePath": "D:\\MicroMart\\lambda\\MicroMart.Products\\src\\MicroMart.Products\\MicroMart.Products.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\ASUS\\.nuget\\packages\\amazon.lambda.apigatewayevents\\2.7.3\\amazon.lambda.apigatewayevents.2.7.3.nupkg.sha512",
+    "C:\\Users\\ASUS\\.nuget\\packages\\amazon.lambda.core\\2.8.0\\amazon.lambda.core.2.8.0.nupkg.sha512",
+    "C:\\Users\\ASUS\\.nuget\\packages\\amazon.lambda.serialization.systemtextjson\\2.4.4\\amazon.lambda.serialization.systemtextjson.2.4.4.nupkg.sha512",
+    "C:\\Users\\ASUS\\.nuget\\packages\\awssdk.core\\4.0.3.6\\awssdk.core.4.0.3.6.nupkg.sha512",
+    "C:\\Users\\ASUS\\.nuget\\packages\\awssdk.dynamodbv2\\4.0.10.4\\awssdk.dynamodbv2.4.0.10.4.nupkg.sha512",
+    "C:\\Users\\ASUS\\.nuget\\packages\\microsoft.netcore.app.runtime.linux-x64\\8.0.20\\microsoft.netcore.app.runtime.linux-x64.8.0.20.nupkg.sha512",
+    "C:\\Users\\ASUS\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.linux-x64\\8.0.20\\microsoft.aspnetcore.app.runtime.linux-x64.8.0.20.nupkg.sha512",
+    "C:\\Users\\ASUS\\.nuget\\packages\\microsoft.netcore.app.crossgen2.win-x64\\8.0.20\\microsoft.netcore.app.crossgen2.win-x64.8.0.20.nupkg.sha512"
+  ],
+  "logs": []
+}

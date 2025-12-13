@@ -1,0 +1,14 @@
+D:\MicroMart\lambda\MicroMart.Authorizer\src\MicroMart.Authorizer\bin\Release\net8.0\publish\MicroMart.Authorizer.deps.json
+D:\MicroMart\lambda\MicroMart.Authorizer\src\MicroMart.Authorizer\bin\Release\net8.0\publish\MicroMart.Authorizer.runtimeconfig.json
+D:\MicroMart\lambda\MicroMart.Authorizer\src\MicroMart.Authorizer\bin\Release\net8.0\publish\MicroMart.Authorizer.pdb
+D:\MicroMart\lambda\MicroMart.Authorizer\src\MicroMart.Authorizer\bin\Release\net8.0\publish\Amazon.Lambda.APIGatewayEvents.dll
+D:\MicroMart\lambda\MicroMart.Authorizer\src\MicroMart.Authorizer\bin\Release\net8.0\publish\Amazon.Lambda.Core.dll
+D:\MicroMart\lambda\MicroMart.Authorizer\src\MicroMart.Authorizer\bin\Release\net8.0\publish\Amazon.Lambda.Serialization.SystemTextJson.dll
+D:\MicroMart\lambda\MicroMart.Authorizer\src\MicroMart.Authorizer\bin\Release\net8.0\publish\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+D:\MicroMart\lambda\MicroMart.Authorizer\src\MicroMart.Authorizer\bin\Release\net8.0\publish\Microsoft.Extensions.Logging.Abstractions.dll
+D:\MicroMart\lambda\MicroMart.Authorizer\src\MicroMart.Authorizer\bin\Release\net8.0\publish\Microsoft.IdentityModel.Abstractions.dll
+D:\MicroMart\lambda\MicroMart.Authorizer\src\MicroMart.Authorizer\bin\Release\net8.0\publish\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\MicroMart\lambda\MicroMart.Authorizer\src\MicroMart.Authorizer\bin\Release\net8.0\publish\Microsoft.IdentityModel.Logging.dll
+D:\MicroMart\lambda\MicroMart.Authorizer\src\MicroMart.Authorizer\bin\Release\net8.0\publish\Microsoft.IdentityModel.Tokens.dll
+D:\MicroMart\lambda\MicroMart.Authorizer\src\MicroMart.Authorizer\bin\Release\net8.0\publish\System.IdentityModel.Tokens.Jwt.dll
+D:\MicroMart\lambda\MicroMart.Authorizer\src\MicroMart.Authorizer\bin\Release\net8.0\publish\MicroMart.Authorizer.dll

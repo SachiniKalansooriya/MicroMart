@@ -1,9 +1,0 @@
-D:\MicroMart\lambda\MicroMart.Upload\src\MicroMart.Upload\bin\Release\net8.0\publish\MicroMart.Upload.deps.json
-D:\MicroMart\lambda\MicroMart.Upload\src\MicroMart.Upload\bin\Release\net8.0\publish\MicroMart.Upload.runtimeconfig.json
-D:\MicroMart\lambda\MicroMart.Upload\src\MicroMart.Upload\bin\Release\net8.0\publish\MicroMart.Upload.pdb
-D:\MicroMart\lambda\MicroMart.Upload\src\MicroMart.Upload\bin\Release\net8.0\publish\Amazon.Lambda.APIGatewayEvents.dll
-D:\MicroMart\lambda\MicroMart.Upload\src\MicroMart.Upload\bin\Release\net8.0\publish\Amazon.Lambda.Core.dll
-D:\MicroMart\lambda\MicroMart.Upload\src\MicroMart.Upload\bin\Release\net8.0\publish\Amazon.Lambda.Serialization.SystemTextJson.dll
-D:\MicroMart\lambda\MicroMart.Upload\src\MicroMart.Upload\bin\Release\net8.0\publish\AWSSDK.Core.dll
-D:\MicroMart\lambda\MicroMart.Upload\src\MicroMart.Upload\bin\Release\net8.0\publish\AWSSDK.S3.dll
-D:\MicroMart\lambda\MicroMart.Upload\src\MicroMart.Upload\bin\Release\net8.0\publish\MicroMart.Upload.dll

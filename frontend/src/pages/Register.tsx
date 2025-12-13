@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function Register() {
-  const [form, setForm] = useState({ name: '', email: '', password: '', phone: '', role: 'customer' });
+  const [form, setForm] = useState({ name: '', email: '', password: '', phone: '' });
   const [error, setError] = useState('');
   const { register, loading } = useAuth();
   const navigate = useNavigate();
@@ -99,22 +99,6 @@ export default function Register() {
               placeholder="Enter your phone number"
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
             />
-          </div>
-          
-          <div>
-            <label htmlFor="role" className="block text-sm font-semibold text-gray-700 mb-2">
-              Account Type
-            </label>
-            <select
-              id="role"
-              name="role"
-              value={form.role}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all bg-white"
-            >
-              <option value="customer">Customer - Browse and purchase products</option>
-              <option value="admin">Admin - Manage products and orders</option>
-            </select>
           </div>
           
           <button

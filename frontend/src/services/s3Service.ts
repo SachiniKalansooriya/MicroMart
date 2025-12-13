@@ -27,7 +27,7 @@ export const s3Service = {
       fileName,
       fileType
     };
-    console.log('📦 [s3Service] Request body:', JSON.stringify(requestBody));
+    console.log(' [s3Service] Request body:', JSON.stringify(requestBody));
     
     const response = await fetch(`${API_BASE_URL}/upload/presigned-url`, {
       method: 'POST',

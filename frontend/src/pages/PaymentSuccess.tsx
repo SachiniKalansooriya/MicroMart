@@ -13,12 +13,14 @@ export default function PaymentSuccess(): React.ReactElement {
     // Countdown and redirect
     const timer = setInterval(() => {
       setCountdown(prev => {
-        if (prev <= 1) {
+        const newCount = prev - 1;
+        if (newCount <= 0) {
           clearInterval(timer);
-          navigate('/orders');
+          // Use setTimeout to ensure navigation happens after state update
+          setTimeout(() => navigate('/orders'), 0);
           return 0;
         }
-        return prev - 1;
+        return newCount;
       });
     }, 1000);
 

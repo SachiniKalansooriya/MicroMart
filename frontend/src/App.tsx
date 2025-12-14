@@ -6,6 +6,7 @@ import CustomerDashboard from './pages/CustomerDashboard'
 import ProductDetail from './pages/ProductDetail'
 import PaymentSuccess from './pages/PaymentSuccess'
 import PaymentCancel from './pages/PaymentCancel'
+import Orders from './pages/Orders'
 import Unauthorized from './pages/Unauthorized'
 import ProductsPage from './pages/ProductsPage'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -177,6 +178,16 @@ function App() {
             element={
               <ProtectedRoute requireCustomer>
                 <ProductDetail />
+              </ProtectedRoute>
+            }
+          />
+          
+          {/* Orders route */}
+          <Route
+            path="/orders"
+            element={
+              <ProtectedRoute>
+                <Orders />
               </ProtectedRoute>
             }
           />

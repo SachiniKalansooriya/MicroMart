@@ -86,9 +86,9 @@ export default function ProductDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+          <div className="inline-block w-12 h-12 border-b-2 border-indigo-600 rounded-full animate-spin"></div>
           <p className="mt-4 text-gray-600">Loading product...</p>
         </div>
       </div>
@@ -97,41 +97,31 @@ export default function ProductDetail() {
 
   if (error || !product) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4">
+      <div className="flex items-center justify-center min-h-screen px-4">
         <div className="text-center">
-          <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-lg mb-4">
+          <div className="px-6 py-4 mb-4 text-red-700 border border-red-200 rounded-lg bg-red-50">
             {error || 'Product not found'}
           </div>
-          <button
-            onClick={() => navigate('/customer')}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
-          >
-            Back to Products
-          </button>
+         
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12">
-      <button
-        onClick={() => navigate('/customer')}
-        className="mb-6 text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-2"
-      >
-        <span>←</span> Back to Products
-      </button>
+    <div className="px-4 py-12 mx-auto max-w-7xl">
+     
 
-      <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8">
+      <div className="overflow-hidden bg-white rounded-lg shadow-lg">
+        <div className="grid grid-cols-1 gap-8 p-8 md:grid-cols-2">
           {/* Product Image */}
           <div className="space-y-4">
-            <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
+            <div className="flex items-center justify-center overflow-hidden bg-gray-100 rounded-lg aspect-square">
               {product.imageUrl ? (
                 <img 
                   src={product.imageUrl} 
                   alt={product.name} 
-                  className="w-full h-full object-cover"
+                  className="object-cover w-full h-full"
                 />
               ) : (
                 <span className="text-gray-400 text-9xl">📦</span>
@@ -146,7 +136,7 @@ export default function ProductDetail() {
           <div className="space-y-6">
             {/* Category Badge */}
             <div>
-              <span className="inline-block bg-indigo-100 text-indigo-800 text-xs font-semibold px-3 py-1 rounded-full">
+              <span className="inline-block px-3 py-1 text-xs font-semibold text-indigo-800 bg-indigo-100 rounded-full">
                 {product.category}
               </span>
             </div>
@@ -162,30 +152,30 @@ export default function ProductDetail() {
                 ${product.price.toFixed(2)}
               </span>
               {product.stock > 0 ? (
-                <span className="text-green-600 font-semibold">
+                <span className="font-semibold text-green-600">
                   ✓ In Stock ({product.stock} available)
                 </span>
               ) : (
-                <span className="text-red-600 font-semibold">
+                <span className="font-semibold text-red-600">
                   ✗ Out of Stock
                 </span>
               )}
             </div>
 
             {/* Description */}
-            <div className="border-t border-gray-200 pt-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-3">
+            <div className="pt-6 border-t border-gray-200">
+              <h2 className="mb-3 text-lg font-semibold text-gray-900">
                 Description
               </h2>
-              <p className="text-gray-600 leading-relaxed">
+              <p className="leading-relaxed text-gray-600">
                 {product.description}
               </p>
             </div>
 
             {/* Color Selection */}
             {product.colors && product.colors.length > 0 && (
-              <div className="border-t border-gray-200 pt-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-3">
+              <div className="pt-6 border-t border-gray-200">
+                <h2 className="mb-3 text-lg font-semibold text-gray-900">
                   Available Colors
                 </h2>
                 <div className="flex flex-wrap gap-3">
@@ -212,8 +202,8 @@ export default function ProductDetail() {
             )}
 
             {/* Quantity Selector */}
-            <div className="border-t border-gray-200 pt-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-3">
+            <div className="pt-6 border-t border-gray-200">
+              <h2 className="mb-3 text-lg font-semibold text-gray-900">
                 Quantity
               </h2>
               <div className="flex items-center gap-4">
@@ -221,7 +211,7 @@ export default function ProductDetail() {
                   <button
                     onClick={() => handleQuantityChange(-1)}
                     disabled={quantity <= 1}
-                    className="px-4 py-2 text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="px-4 py-2 text-gray-600 transition-colors hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     −
                   </button>
@@ -231,7 +221,7 @@ export default function ProductDetail() {
                   <button
                     onClick={() => handleQuantityChange(1)}
                     disabled={!product || quantity >= product.stock}
-                    className="px-4 py-2 text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="px-4 py-2 text-gray-600 transition-colors hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     +
                   </button>
@@ -243,25 +233,25 @@ export default function ProductDetail() {
             </div>
 
             {/* Action Buttons */}
-            <div className="border-t border-gray-200 pt-6 space-y-3">
+            <div className="pt-6 space-y-3 border-t border-gray-200">
               <button
                 onClick={handleAddToCart}
                 disabled={product.stock === 0}
-                className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-4 px-8 rounded-lg transition-colors text-lg"
+                className="w-full px-8 py-4 text-lg font-bold text-white transition-colors bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
               >
                 🛒 Add to Cart
               </button>
               <button
                 onClick={handleBuyNow}
                 disabled={product.stock === 0 || processingPayment}
-                className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-4 px-8 rounded-lg transition-colors text-lg"
+                className="w-full px-8 py-4 text-lg font-bold text-white transition-colors bg-green-600 rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
               >
                 {processingPayment ? '⏳ Processing...' : '⚡ Buy Now'}
               </button>
             </div>
 
             {/* Additional Info */}
-            <div className="bg-gray-50 rounded-lg p-4 space-y-2 text-sm">
+            <div className="p-4 space-y-2 text-sm rounded-lg bg-gray-50">
               <div className="flex justify-between">
                 <span className="text-gray-600">Product ID:</span>
                 <span className="font-mono text-gray-900">{product.productId}</span>

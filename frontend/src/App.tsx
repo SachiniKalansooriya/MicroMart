@@ -10,6 +10,7 @@ import Orders from './pages/Orders'
 import AdminOrders from './pages/AdminOrders'
 import Unauthorized from './pages/Unauthorized'
 import ProductsPage from './pages/ProductsPage'
+import Profile from './pages/Profile'
 import ProtectedRoute from './components/ProtectedRoute'
 import { useAuth } from './contexts/AuthContext'
 import { authService } from './services/authService'
@@ -71,6 +72,19 @@ function App() {
                   <span className="text-sm text-indigo-200">
                     ({user.role})
                   </span>
+                  
+                  {/* Profile Picture */}
+                  <Link
+                    to="/profile"
+                    className="relative group"
+                    title="View Profile"
+                  >
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white font-bold shadow-md hover:shadow-lg transition-all transform hover:scale-105 ring-2 ring-indigo-300 group-hover:ring-indigo-100">
+                      {user.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-400 rounded-full border-2 border-indigo-600"></div>
+                  </Link>
+                  
                   <button
                     onClick={logout}
                     className="px-4 py-2 font-medium transition-colors bg-indigo-700 rounded-md hover:bg-indigo-800"
@@ -199,6 +213,16 @@ function App() {
             element={
               <ProtectedRoute>
                 <Orders />
+              </ProtectedRoute>
+            }
+          />
+          
+          {/* Profile route */}
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
               </ProtectedRoute>
             }
           />

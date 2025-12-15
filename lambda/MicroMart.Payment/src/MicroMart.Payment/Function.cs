@@ -86,14 +86,23 @@ public class Function
             // PUT /orders/{orderId}/status - Update order status (ADMIN only)
             if (method == "PUT" && path.StartsWith("/orders/") && path.EndsWith("/status"))
             {
+                context.Logger.LogInformation($"Matched PUT /orders/{{orderId}}/status route");
                 var pathParts = path.Split('/');
+                context.Logger.LogInformation($"Path parts count: {pathParts.Length}, Parts: {string.Join(", ", pathParts)}");
                 if (pathParts.Length == 4)
                 {
                     var orderId = pathParts[2];
+                    context.Logger.LogInformation($"Calling UpdateOrderStatus for order: {orderId}");
                     return await UpdateOrderStatus(request, orderId, userId, context);
+                }
+                else
+                {
+                    context.Logger.LogWarning($"Path parts length mismatch. Expected 4, got {pathParts.Length}");
+                    return CreateResponse(400, new { error = "Invalid path format" });
                 }
             }
 
+            context.Logger.LogWarning($"No route matched for {method} {path}");
             return CreateResponse(404, new { error = "Route not found" });
         }
         catch (Exception ex)
@@ -485,7 +494,7 @@ public class Function
             
             await ordersTable.PutItemAsync(order);
             
-            context.Logger.LogInformation($"✅ Order {orderId} status updated to {updateRequest.Status} by user {userId}");
+            context.Logger.LogInformation($"Order {orderId} status updated to {updateRequest.Status} by user {userId}");
 
             return CreateResponse(200, new { 
                 message = "Order status updated successfully",

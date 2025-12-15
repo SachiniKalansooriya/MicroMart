@@ -76,13 +76,18 @@ export const paymentService = {
 
   async updateOrderStatus(orderId: string, status: string): Promise<void> {
     try {
-      await authFetch(`${API_BASE_URL}/orders/${orderId}/status`, {
+      console.log(`🔄 Updating order ${orderId} to ${status}`);
+      const response = await authFetch(`${API_BASE_URL}/orders/${orderId}/status`, {
         method: 'PUT',
         body: JSON.stringify({ status })
       });
+      console.log('✅ Update response:', response);
     } catch (error) {
-      console.error('Update order status error:', error);
-      throw error instanceof Error ? error : new Error('Failed to update order status');
+      console.error('❌ Update order status error:', error);
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error('Failed to update order status');
     }
   }
 };

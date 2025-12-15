@@ -76,8 +76,9 @@ export default function AdminOrders(): React.ReactElement {
     try {
       setUpdatingOrderId(orderId);
       
-      // TODO: Implement update order status API
+      console.log(`Updating order ${orderId} to status ${newStatus}`);
       await paymentService.updateOrderStatus(orderId, newStatus);
+      console.log(`✅ Order ${orderId} updated successfully`);
       
       // Update local state
       setOrders(orders.map(order => 
@@ -86,10 +87,11 @@ export default function AdminOrders(): React.ReactElement {
           : order
       ));
       
-      alert(`Order status updated to ${newStatus}`);
+      alert(`✅ Order status updated to ${newStatus}`);
     } catch (err) {
+      console.error('❌ Update order status error:', err);
       const errorMessage = err instanceof Error ? err.message : 'Failed to update order status';
-      alert(`Error: ${errorMessage}`);
+      alert(`❌ Error: ${errorMessage}\n\nCheck browser console for details.`);
     } finally {
       setUpdatingOrderId(null);
     }

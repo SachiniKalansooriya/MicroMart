@@ -1,0 +1,15 @@
+{
+  "requestContext": {
+    "http": {
+      "method": "PUT",
+      "path": "/orders/aad1daa1-de92-4a56-8eaf-4c6a300ff948/status"
+    },
+    "authorizer": {
+      "lambda": {
+        "userId": "dcdc13df-9112-4006-8989-775a2cce089a"
+      }
+    }
+  },
+  "rawPath": "/orders/aad1daa1-de92-4a56-8eaf-4c6a300ff948/status",
+  "body": "{\"status\":\"shipped\"}"
+}

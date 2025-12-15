@@ -24,11 +24,13 @@ export default function Orders(): React.ReactElement {
   const loadOrders = async () => {
     try {
       setLoading(true);
+      setError(''); // Clear previous errors
       const data = await paymentService.getOrders();
-      setOrders(data);
+      setOrders(Array.isArray(data) ? data : []);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load orders';
       setError(errorMessage);
+      setOrders([]); // Ensure orders is always an array
     } finally {
       setLoading(false);
     }
@@ -54,11 +56,18 @@ export default function Orders(): React.ReactElement {
 
       {error && (
         <div className="px-6 py-4 mb-6 text-red-700 border border-red-200 rounded-lg bg-red-50">
-          {error}
+          <p className="mb-2 font-semibold">Error loading orders:</p>
+          <p>{error}</p>
+          <button
+            onClick={loadOrders}
+            className="px-4 py-2 mt-4 text-sm font-semibold text-white transition-colors bg-red-600 rounded hover:bg-red-700"
+          >
+            Try Again
+          </button>
         </div>
       )}
 
-      {orders.length === 0 ? (
+      {!error && orders && orders.length === 0 ? (
         <div className="p-12 text-center bg-white rounded-lg shadow-md">
           <div className="mb-4 text-6xl">📦</div>
           <h2 className="mb-2 text-2xl font-semibold text-gray-900">No orders yet</h2>

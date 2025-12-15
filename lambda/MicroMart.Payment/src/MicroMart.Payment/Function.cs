@@ -47,14 +47,21 @@ public class Function
                 return CreateResponse(200, new { message = "CORS preflight" });
             }
 
-            // Get user context
+            // Get user context from authorizer
             var userId = request.RequestContext.Authorizer?.Lambda?.ContainsKey("userId") == true
                 ? request.RequestContext.Authorizer.Lambda["userId"]?.ToString()
                 : null;
 
-            // POST /payment/create-checkout - Create Stripe checkout session
+            context.Logger.LogInformation($"Request userId from authorizer: {userId ?? "NULL"}");
+
+            // POST /payment/create-checkout - Create Stripe checkout session (REQUIRES AUTH)
             if (method == "POST" && path == "/payment/create-checkout")
             {
+                if (string.IsNullOrEmpty(userId))
+                {
+                    context.Logger.LogWarning("Create checkout attempted without authentication");
+                    return CreateResponse(401, new { error = "Authentication required to create checkout" });
+                }
                 return await CreateCheckoutSession(request, userId, context);
             }
 
@@ -142,7 +149,7 @@ public class Function
                 CancelUrl = $"{origin}/payment/cancel",
                 Metadata = new Dictionary<string, string>
                 {
-                    { "userId", userId ?? "guest" },
+                    { "userId", userId }, // Authenticated user ID (no longer "guest")
                     { "productId", checkoutRequest.ProductId },
                     { "quantity", quantity.ToString() }
                 }
@@ -151,7 +158,7 @@ public class Function
             var service = new SessionService();
             var session = await service.CreateAsync(options);
 
-            context.Logger.LogInformation($"Checkout session created: {session.Id}");
+            context.Logger.LogInformation($"Checkout session created: {session.Id} for user: {userId}");
             context.Logger.LogInformation("Order will be created only after successful payment via webhook");
 
             return CreateResponse(200, new

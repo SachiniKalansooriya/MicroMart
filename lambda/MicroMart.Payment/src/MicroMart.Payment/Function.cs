@@ -16,7 +16,7 @@ public class Function
     private const string ORDERS_TABLE = "MicroMart-Orders";
     private const string PRODUCTS_TABLE = "MicroMart-Products";
     private const string STRIPE_SECRET_KEY = "sk_test_51SdwrOQZz7OWMvrQEIr3yrnQHDt4A99WHrrI6QzgxctwIdzASNqO215SgAiAXFHy7WGaWZX2s2bwmFqRYBd1KKPd00cDodAiPi";
-    private const string STRIPE_WEBHOOK_SECRET = "whsec_e9431075b31d9dbd636fe2aeef2ed3e02d68deb2b81b67aab1c3ae40de99beaa"; // Updated from Stripe Dashboard
+    private const string STRIPE_WEBHOOK_SECRET = "whsec_MLrUCz5PSbnyQxFpSRUFP6GVV8izzhYx"; // Updated from Stripe Dashboard
     
     public Function()
     {
@@ -152,30 +152,7 @@ public class Function
             var session = await service.CreateAsync(options);
 
             context.Logger.LogInformation($"Checkout session created: {session.Id}");
-
-            // Create pending order immediately (will be updated to completed by webhook)
-            try
-            {
-                var ordersTable = Table.LoadTable(_dynamoClient, ORDERS_TABLE);
-                var order = new Document
-                {
-                    ["orderId"] = Guid.NewGuid().ToString(),
-                    ["userId"] = userId ?? "guest",
-                    ["productId"] = checkoutRequest.ProductId,
-                    ["quantity"] = quantity,
-                    ["totalAmount"] = productPrice * quantity,
-                    ["paymentStatus"] = "pending",
-                    ["stripeSessionId"] = session.Id,
-                    ["createdAt"] = DateTime.UtcNow.ToString("o")
-                };
-                await ordersTable.PutItemAsync(order);
-                context.Logger.LogInformation($"Pending order created: {order["orderId"]}");
-            }
-            catch (Exception ex)
-            {
-                context.Logger.LogError($"Failed to create pending order: {ex.Message}");
-                // Don't fail the checkout, just log the error
-            }
+            context.Logger.LogInformation("Order will be created only after successful payment via webhook");
 
             return CreateResponse(200, new
             {
@@ -264,10 +241,16 @@ public class Function
                 
                 context.Logger.LogInformation($"Payment completed for session: {session.Id}");
                 
-                // Update existing order status from pending to completed
+                // Verify payment was actually successful
+                if (session.PaymentStatus != "paid")
+                {
+                    context.Logger.LogWarning($"Session {session.Id} completed but payment status is {session.PaymentStatus}");
+                    return CreateResponse(200, new { received = true, message = "Payment not completed" });
+                }
+                
                 var ordersTable = Table.LoadTable(_dynamoClient, ORDERS_TABLE);
                 
-                // Find the order by stripeSessionId
+                // Check if order already exists (to handle webhook retries)
                 var search = ordersTable.Scan(new ScanFilter());
                 var allOrders = await search.GetRemainingAsync();
                 var existingOrder = allOrders.FirstOrDefault(doc => 
@@ -277,41 +260,37 @@ public class Function
 
                 if (existingOrder != null)
                 {
-                    // Update existing order to completed
-                    existingOrder["paymentStatus"] = "completed";
-                    existingOrder["paidAt"] = DateTime.UtcNow.ToString("o");
-                    await ordersTable.PutItemAsync(existingOrder);
-                    context.Logger.LogInformation($"Order {existingOrder["orderId"]} updated to completed");
+                    context.Logger.LogInformation($"Order already exists for session {session.Id}, skipping creation (webhook retry)");
+                    return CreateResponse(200, new { received = true, message = "Order already exists" });
+                }
+                
+                // Create new order ONLY when payment succeeds
+                if (session.Metadata != null && 
+                    session.Metadata.ContainsKey("userId") && 
+                    session.Metadata.ContainsKey("productId") && 
+                    session.Metadata.ContainsKey("quantity") &&
+                    session.AmountTotal.HasValue)
+                {
+                    var order = new Document
+                    {
+                        ["orderId"] = Guid.NewGuid().ToString(),
+                        ["userId"] = session.Metadata["userId"],
+                        ["productId"] = session.Metadata["productId"],
+                        ["quantity"] = int.Parse(session.Metadata["quantity"]),
+                        ["totalAmount"] = session.AmountTotal.Value / 100m,
+                        ["paymentStatus"] = "completed",
+                        ["stripeSessionId"] = session.Id,
+                        ["createdAt"] = DateTime.UtcNow.ToString("o"),
+                        ["paidAt"] = DateTime.UtcNow.ToString("o")
+                    };
+
+                    await ordersTable.PutItemAsync(order);
+                    context.Logger.LogInformation($"✅ Order created successfully: {order["orderId"]} for completed payment");
                 }
                 else
                 {
-                    // Fallback: Create new order if not found (shouldn't happen but good safety net)
-                    if (session.Metadata != null && 
-                        session.Metadata.ContainsKey("userId") && 
-                        session.Metadata.ContainsKey("productId") && 
-                        session.Metadata.ContainsKey("quantity") &&
-                        session.AmountTotal.HasValue)
-                    {
-                        var order = new Document
-                        {
-                            ["orderId"] = Guid.NewGuid().ToString(),
-                            ["userId"] = session.Metadata["userId"],
-                            ["productId"] = session.Metadata["productId"],
-                            ["quantity"] = int.Parse(session.Metadata["quantity"]),
-                            ["totalAmount"] = session.AmountTotal.Value / 100m,
-                            ["paymentStatus"] = "completed",
-                            ["stripeSessionId"] = session.Id,
-                            ["createdAt"] = DateTime.UtcNow.ToString("o"),
-                            ["paidAt"] = DateTime.UtcNow.ToString("o")
-                        };
-
-                        await ordersTable.PutItemAsync(order);
-                        context.Logger.LogInformation($"New order created from webhook: {order["orderId"]}");
-                    }
-                    else
-                    {
-                        context.Logger.LogWarning($"Order not found for session {session.Id} and metadata incomplete - cannot create fallback order");
-                    }
+                    context.Logger.LogError($"Cannot create order - incomplete metadata for session {session.Id}");
+                    return CreateResponse(400, new { error = "Incomplete order data" });
                 }
             }
 
@@ -330,13 +309,23 @@ public class Function
     {
         try
         {
+            // Validate userId - must be authenticated to view orders
+            if (string.IsNullOrEmpty(userId))
+            {
+                context.Logger.LogWarning("Attempt to fetch orders without authentication");
+                return CreateResponse(401, new { error = "Authentication required" });
+            }
+
+            context.Logger.LogInformation($"Fetching orders for user: {userId}");
+
             var table = Table.LoadTable(_dynamoClient, ORDERS_TABLE);
             
             var search = table.Scan(new ScanFilter());
             var allOrders = await search.GetRemainingAsync();
             
+            // Filter to only show THIS user's orders
             var userOrders = allOrders
-                .Where(doc => doc["userId"].AsString() == userId)
+                .Where(doc => doc.ContainsKey("userId") && doc["userId"].AsString() == userId)
                 .Select(doc => new
                 {
                     orderId = doc["orderId"].AsString(),
@@ -344,15 +333,24 @@ public class Function
                     quantity = doc["quantity"].AsInt(),
                     totalAmount = doc["totalAmount"].AsDecimal(),
                     paymentStatus = doc["paymentStatus"].AsString(),
-                    createdAt = doc["createdAt"].AsString()
+                    createdAt = doc["createdAt"].AsString(),
+                    paidAt = doc.ContainsKey("paidAt") ? doc["paidAt"].AsString() : null,
+                    stripeSessionId = doc.ContainsKey("stripeSessionId") ? doc["stripeSessionId"].AsString() : null
                 })
+                .OrderByDescending(o => o.createdAt)
                 .ToList();
 
-            return CreateResponse(200, new { orders = userOrders });
+            context.Logger.LogInformation($"Found {userOrders.Count} orders for user {userId}");
+
+            return CreateResponse(200, new { 
+                orders = userOrders,
+                userId = userId,
+                totalOrders = userOrders.Count
+            });
         }
         catch (Exception ex)
         {
-            context.Logger.LogError($"Error fetching orders: {ex.Message}");
+            context.Logger.LogError($"Error fetching orders for user {userId}: {ex.Message}");
             return CreateResponse(500, new { error = "Failed to fetch orders" });
         }
     }

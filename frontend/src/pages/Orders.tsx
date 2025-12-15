@@ -82,7 +82,7 @@ export default function Orders(): React.ReactElement {
 
   return (
     <div className="px-4 py-12 mx-auto max-w-7xl">
-      <div className="mb-8 flex items-center justify-between">
+      <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">My Orders</h1>
           <p className="mt-2 text-gray-600">View your order history and track purchases</p>
@@ -160,7 +160,7 @@ export default function Orders(): React.ReactElement {
                       })}
                     </p>
                   </div>
-                  <div className="flex flex-col gap-2 items-end">
+                  <div className="flex flex-col items-end gap-2">
                     <span className={`px-4 py-2 rounded-full text-sm font-semibold ${
                       order.paymentStatus === 'completed' 
                         ? 'bg-green-100 text-green-800' 
@@ -187,23 +187,23 @@ export default function Orders(): React.ReactElement {
 
                 <div className="flex gap-4 py-4 border-t border-gray-200">
                   {/* Product Image */}
-                  <div className="flex-shrink-0 w-24 h-24 bg-gray-100 rounded-lg overflow-hidden">
+                  <div className="flex-shrink-0 w-24 h-24 overflow-hidden bg-gray-100 rounded-lg">
                     {product?.imageUrl ? (
                       <img 
                         src={product.imageUrl} 
                         alt={product.name} 
-                        className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
+                        className="object-cover w-full h-full transition-opacity cursor-pointer hover:opacity-80"
                         onClick={() => navigate(`/product/${order.productId}`)}
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400 text-3xl">
+                      <div className="flex items-center justify-center w-full h-full text-3xl text-gray-400">
                         📦
                       </div>
                     )}
                   </div>
 
                   {/* Product Details */}
-                  <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid flex-1 grid-cols-1 gap-4 md:grid-cols-3">
                     <div>
                       <p className="text-sm text-gray-500">Product</p>
                       <p className="mt-1 font-semibold text-gray-900">
@@ -228,19 +228,7 @@ export default function Orders(): React.ReactElement {
                   </div>
                 </div>
 
-                <div className="flex gap-3 pt-4 mt-4 border-t border-gray-200">
-                  <button
-                    onClick={() => navigate(`/product/${order.productId}`)}
-                    className="flex-1 px-4 py-2 font-medium text-white transition-colors bg-indigo-600 rounded-lg hover:bg-indigo-700"
-                  >
-                    View Product
-                  </button>
-                  <button
-                    className="flex-1 px-4 py-2 font-medium text-gray-700 transition-colors bg-gray-100 rounded-lg hover:bg-gray-200"
-                  >
-                    Download Invoice
-                  </button>
-                </div>
+                
               </div>
             </div>
           )})}

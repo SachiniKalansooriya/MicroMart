@@ -319,7 +319,37 @@ public class Function
                     };
 
                     await ordersTable.PutItemAsync(order);
-                    context.Logger.LogInformation($"✅ Order created successfully: {order["orderId"]} for completed payment");
+                    context.Logger.LogInformation($"Order created successfully: {order["orderId"]} for completed payment");
+
+                    // Decrement product stock
+                    try
+                    {
+                        var productId = session.Metadata["productId"];
+                        var quantity = int.Parse(session.Metadata["quantity"]);
+                        
+                        var productsTable = Table.LoadTable(_dynamoClient, PRODUCTS_TABLE);
+                        var product = await productsTable.GetItemAsync(productId);
+                        
+                        if (product != null && product.ContainsKey("stock"))
+                        {
+                            var currentStock = product["stock"].AsInt();
+                            var newStock = Math.Max(0, currentStock - quantity);
+                            
+                            product["stock"] = newStock;
+                            await productsTable.UpdateItemAsync(product);
+                            
+                            context.Logger.LogInformation($"Stock updated for product {productId}: {currentStock} -> {newStock} (quantity ordered: {quantity})");
+                        }
+                        else
+                        {
+                            context.Logger.LogWarning($"Product {productId} not found or has no stock field");
+                        }
+                    }
+                    catch (Exception stockEx)
+                    {
+                        context.Logger.LogError($"Failed to update stock: {stockEx.Message}");
+                        // Don't fail the webhook if stock update fails - order is already created
+                    }
                 }
                 else
                 {

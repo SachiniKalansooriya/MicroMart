@@ -7,6 +7,7 @@ import ProductDetail from './pages/ProductDetail'
 import PaymentSuccess from './pages/PaymentSuccess'
 import PaymentCancel from './pages/PaymentCancel'
 import Orders from './pages/Orders'
+import AdminOrders from './pages/AdminOrders'
 import Unauthorized from './pages/Unauthorized'
 import ProductsPage from './pages/ProductsPage'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -158,6 +159,16 @@ function App() {
             element={
               <ProtectedRoute requireAdmin>
                 <ProductsPage />
+              </ProtectedRoute>
+            }
+          />
+          
+          {/* Admin Orders route */}
+          <Route
+            path="/admin/orders"
+            element={
+              <ProtectedRoute requireAdmin>
+                <AdminOrders />
               </ProtectedRoute>
             }
           />

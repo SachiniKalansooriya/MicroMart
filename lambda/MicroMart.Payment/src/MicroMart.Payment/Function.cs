@@ -77,6 +77,23 @@ public class Function
                 return await GetUserOrders(userId, context);
             }
 
+            // GET /admin/orders - Get all orders (ADMIN only)
+            if (method == "GET" && path == "/admin/orders")
+            {
+                return await GetAllOrders(userId, context);
+            }
+
+            // PUT /orders/{orderId}/status - Update order status (ADMIN only)
+            if (method == "PUT" && path.StartsWith("/orders/") && path.EndsWith("/status"))
+            {
+                var pathParts = path.Split('/');
+                if (pathParts.Length == 4)
+                {
+                    var orderId = pathParts[2];
+                    return await UpdateOrderStatus(request, orderId, userId, context);
+                }
+            }
+
             return CreateResponse(404, new { error = "Route not found" });
         }
         catch (Exception ex)
@@ -286,6 +303,7 @@ public class Function
                         ["quantity"] = int.Parse(session.Metadata["quantity"]),
                         ["totalAmount"] = session.AmountTotal.Value / 100m,
                         ["paymentStatus"] = "completed",
+                        ["orderStatus"] = "processing",
                         ["stripeSessionId"] = session.Id,
                         ["createdAt"] = DateTime.UtcNow.ToString("o"),
                         ["paidAt"] = DateTime.UtcNow.ToString("o")
@@ -336,10 +354,12 @@ public class Function
                 .Select(doc => new
                 {
                     orderId = doc["orderId"].AsString(),
+                    userId = doc["userId"].AsString(),
                     productId = doc["productId"].AsString(),
                     quantity = doc["quantity"].AsInt(),
                     totalAmount = doc["totalAmount"].AsDecimal(),
                     paymentStatus = doc["paymentStatus"].AsString(),
+                    orderStatus = doc.ContainsKey("orderStatus") ? doc["orderStatus"].AsString() : "processing",
                     createdAt = doc["createdAt"].AsString(),
                     paidAt = doc.ContainsKey("paidAt") ? doc["paidAt"].AsString() : null,
                     stripeSessionId = doc.ContainsKey("stripeSessionId") ? doc["stripeSessionId"].AsString() : null
@@ -359,6 +379,124 @@ public class Function
         {
             context.Logger.LogError($"Error fetching orders for user {userId}: {ex.Message}");
             return CreateResponse(500, new { error = "Failed to fetch orders" });
+        }
+    }
+
+    private async Task<APIGatewayHttpApiV2ProxyResponse> GetAllOrders(
+        string userId,
+        ILambdaContext context)
+    {
+        try
+        {
+            // TODO: Add proper admin role check here
+            if (string.IsNullOrEmpty(userId))
+            {
+                context.Logger.LogWarning("Get all orders attempted without authentication");
+                return CreateResponse(401, new { error = "Authentication required" });
+            }
+
+            var table = Table.LoadTable(_dynamoClient, ORDERS_TABLE);
+            
+            var search = table.Scan(new ScanFilter());
+            var allOrders = await search.GetRemainingAsync();
+            
+            // Return ALL orders (not filtered by userId)
+            var orders = allOrders
+                .Select(doc => new
+                {
+                    orderId = doc["orderId"].AsString(),
+                    userId = doc["userId"].AsString(),
+                    productId = doc["productId"].AsString(),
+                    quantity = doc["quantity"].AsInt(),
+                    totalAmount = doc["totalAmount"].AsDecimal(),
+                    paymentStatus = doc["paymentStatus"].AsString(),
+                    orderStatus = doc.ContainsKey("orderStatus") ? doc["orderStatus"].AsString() : "processing",
+                    createdAt = doc["createdAt"].AsString(),
+                    paidAt = doc.ContainsKey("paidAt") ? doc["paidAt"].AsString() : null,
+                    stripeSessionId = doc.ContainsKey("stripeSessionId") ? doc["stripeSessionId"].AsString() : null
+                })
+                .OrderByDescending(o => o.createdAt)
+                .ToList();
+
+            context.Logger.LogInformation($"Admin {userId} fetched {orders.Count} total orders");
+
+            return CreateResponse(200, new { 
+                orders = orders,
+                totalOrders = orders.Count
+            });
+        }
+        catch (Exception ex)
+        {
+            context.Logger.LogError($"Error fetching all orders: {ex.Message}");
+            return CreateResponse(500, new { error = "Failed to fetch all orders" });
+        }
+    }
+
+    private async Task<APIGatewayHttpApiV2ProxyResponse> UpdateOrderStatus(
+        APIGatewayHttpApiV2ProxyRequest request,
+        string orderId,
+        string userId,
+        ILambdaContext context)
+    {
+        try
+        {
+            // TODO: Add admin role check here
+            if (string.IsNullOrEmpty(userId))
+            {
+                context.Logger.LogWarning("Update order status attempted without authentication");
+                return CreateResponse(401, new { error = "Authentication required" });
+            }
+
+            var updateRequest = JsonSerializer.Deserialize<UpdateOrderStatusRequest>(
+                request.Body,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+            );
+
+            if (string.IsNullOrEmpty(updateRequest?.Status))
+            {
+                return CreateResponse(400, new { error = "Status is required" });
+            }
+
+            // Validate status
+            var validStatuses = new[] { "processing", "shipped", "delivered", "cancelled" };
+            if (!validStatuses.Contains(updateRequest.Status.ToLower()))
+            {
+                return CreateResponse(400, new { error = "Invalid status. Must be: processing, shipped, delivered, or cancelled" });
+            }
+
+            var ordersTable = Table.LoadTable(_dynamoClient, ORDERS_TABLE);
+            
+            // Find the order
+            var search = ordersTable.Scan(new ScanFilter());
+            var allOrders = await search.GetRemainingAsync();
+            var order = allOrders.FirstOrDefault(doc => 
+                doc.ContainsKey("orderId") && 
+                doc["orderId"].AsString() == orderId);
+
+            if (order == null)
+            {
+                context.Logger.LogWarning($"Order not found: {orderId}");
+                return CreateResponse(404, new { error = "Order not found" });
+            }
+
+            // Update order status
+            order["orderStatus"] = updateRequest.Status.ToLower();
+            order["updatedAt"] = DateTime.UtcNow.ToString("o");
+            
+            await ordersTable.PutItemAsync(order);
+            
+            context.Logger.LogInformation($"✅ Order {orderId} status updated to {updateRequest.Status} by user {userId}");
+
+            return CreateResponse(200, new { 
+                message = "Order status updated successfully",
+                orderId = orderId,
+                newStatus = updateRequest.Status.ToLower()
+            });
+        }
+        catch (Exception ex)
+        {
+            context.Logger.LogError($"Error updating order status for order {orderId}: {ex.Message}");
+            return CreateResponse(500, new { error = "Failed to update order status" });
         }
     }
 
@@ -383,4 +521,9 @@ public class CheckoutRequest
 {
     public string ProductId { get; set; }
     public int? Quantity { get; set; } = 1;
+}
+
+public class UpdateOrderStatusRequest
+{
+    public string Status { get; set; }
 }

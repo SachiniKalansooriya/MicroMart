@@ -62,5 +62,27 @@ export const paymentService = {
       console.error('Get orders error:', error);
       throw error instanceof Error ? error : new Error('Failed to fetch orders');
     }
+  },
+
+  async getAllOrders(): Promise<Order[]> {
+    try {
+      const result = await authFetch<OrdersResponse>(`${API_BASE_URL}/admin/orders`);
+      return result.orders;
+    } catch (error) {
+      console.error('Get all orders error:', error);
+      throw error instanceof Error ? error : new Error('Failed to fetch all orders');
+    }
+  },
+
+  async updateOrderStatus(orderId: string, status: string): Promise<void> {
+    try {
+      await authFetch(`${API_BASE_URL}/orders/${orderId}/status`, {
+        method: 'PUT',
+        body: JSON.stringify({ status })
+      });
+    } catch (error) {
+      console.error('Update order status error:', error);
+      throw error instanceof Error ? error : new Error('Failed to update order status');
+    }
   }
 };

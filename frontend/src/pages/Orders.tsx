@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { paymentService } from '../services/paymentService';
+import productService, { type Product } from '../services/productService';
 
 interface Order {
   orderId: string;
@@ -8,7 +9,10 @@ interface Order {
   quantity: number;
   totalAmount: number;
   paymentStatus: string;
+  orderStatus?: string;
   createdAt: string;
+  productName?: string;
+  productImage?: string;
 }
 
 export default function Orders(): React.ReactElement {
@@ -16,6 +20,7 @@ export default function Orders(): React.ReactElement {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [products, setProducts] = useState<Record<string, Product>>({});
 
   useEffect(() => {
     loadOrders();
@@ -26,7 +31,22 @@ export default function Orders(): React.ReactElement {
       setLoading(true);
       setError(''); // Clear previous errors
       const data = await paymentService.getOrders();
-      setOrders(Array.isArray(data) ? data : []);
+      const ordersArray = Array.isArray(data) ? data : [];
+      setOrders(ordersArray);
+      
+      // Fetch product details for each order
+      const productMap: Record<string, Product> = {};
+      for (const order of ordersArray) {
+        try {
+          if (!productMap[order.productId]) {
+            const product = await productService.getProduct(order.productId);
+            productMap[order.productId] = product;
+          }
+        } catch (err) {
+          console.error(`Failed to load product ${order.productId}:`, err);
+        }
+      }
+      setProducts(productMap);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load orders';
       setError(errorMessage);
@@ -81,7 +101,11 @@ export default function Orders(): React.ReactElement {
         </div>
       ) : (
         <div className="space-y-6">
-          {orders.map((order) => (
+          {orders.map((order) => {
+            const product = products[order.productId];
+            const orderStatus = order.orderStatus || 'processing';
+            
+            return (
             <div key={order.orderId} className="overflow-hidden bg-white rounded-lg shadow-md">
               <div className="p-6">
                 <div className="flex items-start justify-between mb-4">
@@ -99,36 +123,71 @@ export default function Orders(): React.ReactElement {
                       })}
                     </p>
                   </div>
-                  <span className={`px-4 py-2 rounded-full text-sm font-semibold ${
-                    order.paymentStatus === 'completed' 
-                      ? 'bg-green-100 text-green-800' 
-                      : order.paymentStatus === 'pending'
-                      ? 'bg-yellow-100 text-yellow-800'
-                      : 'bg-red-100 text-red-800'
-                  }`}>
-                    {order.paymentStatus === 'completed' ? '✓ Paid' : 
-                     order.paymentStatus === 'pending' ? '⏳ Pending' : '✗ Failed'}
-                  </span>
+                  <div className="flex flex-col gap-2 items-end">
+                    <span className={`px-4 py-2 rounded-full text-sm font-semibold ${
+                      order.paymentStatus === 'completed' 
+                        ? 'bg-green-100 text-green-800' 
+                        : order.paymentStatus === 'pending'
+                        ? 'bg-yellow-100 text-yellow-800'
+                        : 'bg-red-100 text-red-800'
+                    }`}>
+                      {order.paymentStatus === 'completed' ? '✓ Paid' : 
+                       order.paymentStatus === 'pending' ? '⏳ Pending' : '✗ Failed'}
+                    </span>
+                    <span className={`px-4 py-2 rounded-full text-sm font-semibold ${
+                      orderStatus === 'delivered' ? 'bg-green-100 text-green-800' :
+                      orderStatus === 'shipped' ? 'bg-blue-100 text-blue-800' :
+                      orderStatus === 'processing' ? 'bg-yellow-100 text-yellow-800' :
+                      'bg-red-100 text-red-800'
+                    }`}>
+                      {orderStatus === 'delivered' ? '📦 Delivered' :
+                       orderStatus === 'shipped' ? '🚚 Shipped' :
+                       orderStatus === 'processing' ? '⏱️ Processing' :
+                       '❌ Cancelled'}
+                    </span>
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-1 gap-4 py-4 border-t border-gray-200 md:grid-cols-3">
-                  <div>
-                    <p className="text-sm text-gray-500">Product ID</p>
-                    <p className="mt-1 font-mono text-sm text-gray-900">
-                      {order.productId.substring(0, 12)}...
-                    </p>
+                <div className="flex gap-4 py-4 border-t border-gray-200">
+                  {/* Product Image */}
+                  <div className="flex-shrink-0 w-24 h-24 bg-gray-100 rounded-lg overflow-hidden">
+                    {product?.imageUrl ? (
+                      <img 
+                        src={product.imageUrl} 
+                        alt={product.name} 
+                        className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
+                        onClick={() => navigate(`/product/${order.productId}`)}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-400 text-3xl">
+                        📦
+                      </div>
+                    )}
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Quantity</p>
-                    <p className="mt-1 font-semibold text-gray-900">
-                      {order.quantity} item{order.quantity > 1 ? 's' : ''}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Total Amount</p>
-                    <p className="mt-1 text-2xl font-bold text-indigo-600">
-                      ${order.totalAmount.toFixed(2)}
-                    </p>
+
+                  {/* Product Details */}
+                  <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <p className="text-sm text-gray-500">Product</p>
+                      <p className="mt-1 font-semibold text-gray-900">
+                        {product?.name || 'Loading...'}
+                      </p>
+                      {product?.category && (
+                        <p className="text-xs text-gray-500 mt-0.5">{product.category}</p>
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Quantity</p>
+                      <p className="mt-1 font-semibold text-gray-900">
+                        {order.quantity} item{order.quantity > 1 ? 's' : ''}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Total Amount</p>
+                      <p className="mt-1 text-2xl font-bold text-indigo-600">
+                        ${order.totalAmount.toFixed(2)}
+                      </p>
+                    </div>
                   </div>
                 </div>
 
@@ -147,7 +206,7 @@ export default function Orders(): React.ReactElement {
                 </div>
               </div>
             </div>
-          ))}
+          )})}
         </div>
       )}
 

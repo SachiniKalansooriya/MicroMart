@@ -36,9 +36,9 @@ export default function Orders(): React.ReactElement {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+          <div className="inline-block w-12 h-12 border-b-2 border-indigo-600 rounded-full animate-spin"></div>
           <p className="mt-4 text-gray-600">Loading orders...</p>
         </div>
       </div>
@@ -46,26 +46,26 @@ export default function Orders(): React.ReactElement {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12">
+    <div className="px-4 py-12 mx-auto max-w-7xl">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">My Orders</h1>
-        <p className="text-gray-600 mt-2">View your order history and track purchases</p>
+        <p className="mt-2 text-gray-600">View your order history and track purchases</p>
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-lg mb-6">
+        <div className="px-6 py-4 mb-6 text-red-700 border border-red-200 rounded-lg bg-red-50">
           {error}
         </div>
       )}
 
       {orders.length === 0 ? (
-        <div className="bg-white rounded-lg shadow-md p-12 text-center">
-          <div className="text-6xl mb-4">📦</div>
-          <h2 className="text-2xl font-semibold text-gray-900 mb-2">No orders yet</h2>
-          <p className="text-gray-600 mb-6">Start shopping to see your orders here</p>
+        <div className="p-12 text-center bg-white rounded-lg shadow-md">
+          <div className="mb-4 text-6xl">📦</div>
+          <h2 className="mb-2 text-2xl font-semibold text-gray-900">No orders yet</h2>
+          <p className="mb-6 text-gray-600">Start shopping to see your orders here</p>
           <button
             onClick={() => navigate('/customer')}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+            className="px-6 py-3 font-semibold text-white transition-colors bg-indigo-600 rounded-lg hover:bg-indigo-700"
           >
             Browse Products
           </button>
@@ -73,14 +73,14 @@ export default function Orders(): React.ReactElement {
       ) : (
         <div className="space-y-6">
           {orders.map((order) => (
-            <div key={order.orderId} className="bg-white rounded-lg shadow-md overflow-hidden">
+            <div key={order.orderId} className="overflow-hidden bg-white rounded-lg shadow-md">
               <div className="p-6">
-                <div className="flex justify-between items-start mb-4">
+                <div className="flex items-start justify-between mb-4">
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900">
                       Order #{order.orderId.substring(0, 8)}
                     </h3>
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="mt-1 text-sm text-gray-500">
                       {new Date(order.createdAt).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'long',
@@ -93,42 +93,45 @@ export default function Orders(): React.ReactElement {
                   <span className={`px-4 py-2 rounded-full text-sm font-semibold ${
                     order.paymentStatus === 'completed' 
                       ? 'bg-green-100 text-green-800' 
-                      : 'bg-yellow-100 text-yellow-800'
+                      : order.paymentStatus === 'pending'
+                      ? 'bg-yellow-100 text-yellow-800'
+                      : 'bg-red-100 text-red-800'
                   }`}>
-                    {order.paymentStatus === 'completed' ? '✓ Paid' : 'Pending'}
+                    {order.paymentStatus === 'completed' ? '✓ Paid' : 
+                     order.paymentStatus === 'pending' ? '⏳ Pending' : '✗ Failed'}
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 py-4 border-t border-gray-200">
+                <div className="grid grid-cols-1 gap-4 py-4 border-t border-gray-200 md:grid-cols-3">
                   <div>
                     <p className="text-sm text-gray-500">Product ID</p>
-                    <p className="font-mono text-sm text-gray-900 mt-1">
+                    <p className="mt-1 font-mono text-sm text-gray-900">
                       {order.productId.substring(0, 12)}...
                     </p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Quantity</p>
-                    <p className="text-gray-900 font-semibold mt-1">
+                    <p className="mt-1 font-semibold text-gray-900">
                       {order.quantity} item{order.quantity > 1 ? 's' : ''}
                     </p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Total Amount</p>
-                    <p className="text-2xl font-bold text-indigo-600 mt-1">
+                    <p className="mt-1 text-2xl font-bold text-indigo-600">
                       ${order.totalAmount.toFixed(2)}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex gap-3 mt-4 pt-4 border-t border-gray-200">
+                <div className="flex gap-3 pt-4 mt-4 border-t border-gray-200">
                   <button
                     onClick={() => navigate(`/product/${order.productId}`)}
-                    className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                    className="flex-1 px-4 py-2 font-medium text-white transition-colors bg-indigo-600 rounded-lg hover:bg-indigo-700"
                   >
                     View Product
                   </button>
                   <button
-                    className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium transition-colors"
+                    className="flex-1 px-4 py-2 font-medium text-gray-700 transition-colors bg-gray-100 rounded-lg hover:bg-gray-200"
                   >
                     Download Invoice
                   </button>
@@ -142,7 +145,7 @@ export default function Orders(): React.ReactElement {
       <div className="mt-8 text-center">
         <button
           onClick={() => navigate('/customer')}
-          className="text-indigo-600 hover:text-indigo-700 font-medium"
+          className="font-medium text-indigo-600 hover:text-indigo-700"
         >
           ← Back to Products
         </button>

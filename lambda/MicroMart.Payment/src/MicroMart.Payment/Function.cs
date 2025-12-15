@@ -15,7 +15,8 @@ public class Function
     private readonly IAmazonDynamoDB _dynamoClient;
     private const string ORDERS_TABLE = "MicroMart-Orders";
     private const string PRODUCTS_TABLE = "MicroMart-Products";
-    private const string STRIPE_SECRET_KEY = "sk_test_51SdwrbQXeqGKU49Hm4flrlPYQFJBA8pogGJZ4XtsJNLzVm3h2Zx3enlQDwGV1S2SwTL82unllvOsrxuXk7aIyMUZ00187xMPTd";
+    private const string STRIPE_SECRET_KEY = "sk_test_51SdwrOQZz7OWMvrQEIr3yrnQHDt4A99WHrrI6QzgxctwIdzASNqO215SgAiAXFHy7WGaWZX2s2bwmFqRYBd1KKPd00cDodAiPi";
+    private const string STRIPE_WEBHOOK_SECRET = "whsec_e9431075b31d9dbd636fe2aeef2ed3e02d68deb2b81b67aab1c3ae40de99beaa"; // Updated from Stripe Dashboard
     
     public Function()
     {
@@ -152,6 +153,30 @@ public class Function
 
             context.Logger.LogInformation($"Checkout session created: {session.Id}");
 
+            // Create pending order immediately (will be updated to completed by webhook)
+            try
+            {
+                var ordersTable = Table.LoadTable(_dynamoClient, ORDERS_TABLE);
+                var order = new Document
+                {
+                    ["orderId"] = Guid.NewGuid().ToString(),
+                    ["userId"] = userId ?? "guest",
+                    ["productId"] = checkoutRequest.ProductId,
+                    ["quantity"] = quantity,
+                    ["totalAmount"] = productPrice * quantity,
+                    ["paymentStatus"] = "pending",
+                    ["stripeSessionId"] = session.Id,
+                    ["createdAt"] = DateTime.UtcNow.ToString("o")
+                };
+                await ordersTable.PutItemAsync(order);
+                context.Logger.LogInformation($"Pending order created: {order["orderId"]}");
+            }
+            catch (Exception ex)
+            {
+                context.Logger.LogError($"Failed to create pending order: {ex.Message}");
+                // Don't fail the checkout, just log the error
+            }
+
             return CreateResponse(200, new
             {
                 sessionId = session.Id,
@@ -172,29 +197,122 @@ public class Function
         try
         {
             var json = request.Body;
-            var stripeEvent = EventUtility.ParseEvent(json);
+            
+            if (string.IsNullOrEmpty(json))
+            {
+                context.Logger.LogError("Webhook body is null or empty");
+                return CreateResponse(400, new { error = "Empty body" });
+            }
+
+            // Try to get stripe-signature header (may be in different formats)
+            string stripeSignature = null;
+            if (request.Headers != null)
+            {
+                if (request.Headers.ContainsKey("stripe-signature"))
+                {
+                    stripeSignature = request.Headers["stripe-signature"];
+                }
+                else if (request.Headers.ContainsKey("Stripe-Signature"))
+                {
+                    stripeSignature = request.Headers["Stripe-Signature"];
+                }
+            }
+
+            context.Logger.LogInformation($"Webhook received. Has signature: {!string.IsNullOrEmpty(stripeSignature)}");
+
+            Event stripeEvent;
+            
+            // Verify webhook signature for security
+            if (!string.IsNullOrEmpty(STRIPE_WEBHOOK_SECRET) && !string.IsNullOrEmpty(stripeSignature))
+            {
+                try
+                {
+                    stripeEvent = EventUtility.ConstructEvent(json, stripeSignature, STRIPE_WEBHOOK_SECRET);
+                    context.Logger.LogInformation("Webhook signature verified");
+                }
+                catch (Exception ex)
+                {
+                    context.Logger.LogError($"Webhook signature verification failed: {ex.Message}");
+                    return CreateResponse(400, new { error = "Invalid signature" });
+                }
+            }
+            else
+            {
+                // For testing without webhook signature
+                try
+                {
+                    stripeEvent = EventUtility.ParseEvent(json);
+                    context.Logger.LogInformation("Webhook processed without signature verification (testing mode)");
+                }
+                catch (Exception ex)
+                {
+                    context.Logger.LogError($"Failed to parse webhook event: {ex.Message}");
+                    return CreateResponse(400, new { error = "Invalid event data" });
+                }
+            }
 
             // Handle successful payment
             if (stripeEvent.Type == "checkout.session.completed")
             {
                 var session = stripeEvent.Data.Object as Session;
                 
-                // Save order to DynamoDB
-                var ordersTable = Table.LoadTable(_dynamoClient, ORDERS_TABLE);
-                var order = new Document
+                if (session == null)
                 {
-                    ["orderId"] = Guid.NewGuid().ToString(),
-                    ["userId"] = session.Metadata["userId"],
-                    ["productId"] = session.Metadata["productId"],
-                    ["quantity"] = int.Parse(session.Metadata["quantity"]),
-                    ["totalAmount"] = session.AmountTotal / 100m,
-                    ["paymentStatus"] = "completed",
-                    ["stripeSessionId"] = session.Id,
-                    ["createdAt"] = DateTime.UtcNow.ToString("o")
-                };
+                    context.Logger.LogError("Session object is null in webhook event");
+                    return CreateResponse(400, new { error = "Invalid session data" });
+                }
+                
+                context.Logger.LogInformation($"Payment completed for session: {session.Id}");
+                
+                // Update existing order status from pending to completed
+                var ordersTable = Table.LoadTable(_dynamoClient, ORDERS_TABLE);
+                
+                // Find the order by stripeSessionId
+                var search = ordersTable.Scan(new ScanFilter());
+                var allOrders = await search.GetRemainingAsync();
+                var existingOrder = allOrders.FirstOrDefault(doc => 
+                    doc.ContainsKey("stripeSessionId") && 
+                    doc["stripeSessionId"] != null &&
+                    doc["stripeSessionId"].AsString() == session.Id);
 
-                await ordersTable.PutItemAsync(order);
-                context.Logger.LogInformation($"Order created: {order["orderId"]}");
+                if (existingOrder != null)
+                {
+                    // Update existing order to completed
+                    existingOrder["paymentStatus"] = "completed";
+                    existingOrder["paidAt"] = DateTime.UtcNow.ToString("o");
+                    await ordersTable.PutItemAsync(existingOrder);
+                    context.Logger.LogInformation($"Order {existingOrder["orderId"]} updated to completed");
+                }
+                else
+                {
+                    // Fallback: Create new order if not found (shouldn't happen but good safety net)
+                    if (session.Metadata != null && 
+                        session.Metadata.ContainsKey("userId") && 
+                        session.Metadata.ContainsKey("productId") && 
+                        session.Metadata.ContainsKey("quantity") &&
+                        session.AmountTotal.HasValue)
+                    {
+                        var order = new Document
+                        {
+                            ["orderId"] = Guid.NewGuid().ToString(),
+                            ["userId"] = session.Metadata["userId"],
+                            ["productId"] = session.Metadata["productId"],
+                            ["quantity"] = int.Parse(session.Metadata["quantity"]),
+                            ["totalAmount"] = session.AmountTotal.Value / 100m,
+                            ["paymentStatus"] = "completed",
+                            ["stripeSessionId"] = session.Id,
+                            ["createdAt"] = DateTime.UtcNow.ToString("o"),
+                            ["paidAt"] = DateTime.UtcNow.ToString("o")
+                        };
+
+                        await ordersTable.PutItemAsync(order);
+                        context.Logger.LogInformation($"New order created from webhook: {order["orderId"]}");
+                    }
+                    else
+                    {
+                        context.Logger.LogWarning($"Order not found for session {session.Id} and metadata incomplete - cannot create fallback order");
+                    }
+                }
             }
 
             return CreateResponse(200, new { received = true });

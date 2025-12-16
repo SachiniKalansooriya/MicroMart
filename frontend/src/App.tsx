@@ -145,7 +145,7 @@ function App() {
                   {/* Right side - Content */}
                   <div className="p-8 space-y-6 text-center shadow-2xl lg:text-left bg-white/80 backdrop-blur-md lg:p-10 rounded-2xl">
                     <div className="space-y-4">
-                      <h1 className="text-5xl font-extrabold leading-tight text-transparent lg:text-6xl bg-clip-text bg-gradient-to-r text-[#1A3D63]">
+                      <h1 className="text-5xl font-extrabold leading-tight lg:text-6xl bg-clip-text text-[#1A3D63]">
                         Welcome to MicroMart
                       </h1>
                       <div className="w-24 h-1 mx-auto rounded-full "></div>

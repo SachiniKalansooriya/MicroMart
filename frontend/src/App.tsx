@@ -34,19 +34,22 @@ function App() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <nav className="text-white bg-indigo-600 shadow-lg">
-        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div className="max-w-full px-4 mx-auto sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
+            {/* Left side - Logo */}
             <div className="flex-shrink-0">
               <Link to="/" className="text-2xl font-bold transition-colors hover:text-indigo-100">
                 🛒 MicroMart
               </Link>
             </div>
-            <div className="flex items-center space-x-6">
-              <Link to="/" className="font-medium transition-colors hover:text-indigo-100">
-                Home
-              </Link>
+
+            {/* Right side - Navigation */}
+            <div className="flex items-center space-x-4">
               {!user && (
                 <>
+                  <Link to="/" className="font-medium transition-colors hover:text-indigo-100">
+                    Home
+                  </Link>
                   <Link to="/login" className="font-medium transition-colors hover:text-indigo-100">
                     Login
                   </Link>
@@ -57,21 +60,21 @@ function App() {
               )}
               {user && (
                 <>
-                  <Link to="/dashboard" className="font-medium transition-colors hover:text-indigo-100">
-                    Dashboard
-                  </Link>
                   {user.role === 'admin' && (
-                    <Link to="/admin" className="font-medium transition-colors hover:text-indigo-100">
-                      Admin
-                    </Link>
-                  )}
-                  {user.role === 'customer' && (
-                    <Link to="/customer" className="font-medium transition-colors hover:text-indigo-100">
-                      Shop
-                    </Link>
+                    <>
+                      <Link to="/dashboard" className="font-medium transition-colors hover:text-indigo-100">
+                        Dashboard
+                      </Link>
+                      <Link to="/admin" className="font-medium transition-colors hover:text-indigo-100">
+                        Admin
+                      </Link>
+                    </>
                   )}
                   {user.role === 'customer' && (
                     <>
+                      <Link to="/customer" className="font-medium transition-colors hover:text-indigo-100">
+                        Shop
+                      </Link>
                       <Link 
                         to="/cart"
                         className="relative p-2 transition-colors rounded-md hover:bg-indigo-700"
@@ -92,9 +95,6 @@ function App() {
                       </Link>
                     </>
                   )}
-                  <span className="text-sm text-indigo-200">
-                    ({user.role})
-                  </span>
                   <Link 
                     to="/profile"
                     className="flex items-center gap-2 px-3 py-2 font-medium transition-colors rounded-md hover:bg-indigo-700"
@@ -102,7 +102,6 @@ function App() {
                     <div className="flex items-center justify-center w-10 h-10 overflow-hidden text-sm font-bold text-white border-2 border-white rounded-full shadow-lg bg-gradient-to-br from-blue-500 to-purple-600">
                       {user.name?.[0]?.toUpperCase() || 'U'}
                     </div>
-                   
                   </Link>
                   <button
                     onClick={logout}

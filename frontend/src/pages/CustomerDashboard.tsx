@@ -29,7 +29,7 @@ export default function CustomerDashboard() {
   };
 
   return (
-    <div className="px-4 py-12 mx-auto max-w-7xl">
+    <div className="px-4 py-12 mx-auto max-w-[1600px]">
       <div className="p-8 bg-white rounded-lg shadow-lg">
         <div className="mb-8">
           <h2 className="mb-2 text-3xl font-bold text-gray-900">

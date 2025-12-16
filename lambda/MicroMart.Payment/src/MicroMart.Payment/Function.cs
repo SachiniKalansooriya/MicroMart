@@ -15,12 +15,19 @@ public class Function
     private readonly IAmazonDynamoDB _dynamoClient;
     private const string ORDERS_TABLE = "MicroMart-Orders";
     private const string PRODUCTS_TABLE = "MicroMart-Products";
-    private const string STRIPE_SECRET_KEY = "sk_test_51SdwrOQZz7OWMvrQEIr3yrnQHDt4A99WHrrI6QzgxctwIdzASNqO215SgAiAXFHy7WGaWZX2s2bwmFqRYBd1KKPd00cDodAiPi";
-    private const string STRIPE_WEBHOOK_SECRET = "whsec_MLrUCz5PSbnyQxFpSRUFP6GVV8izzhYx"; // Updated from Stripe Dashboard
+    private readonly string STRIPE_SECRET_KEY;
+    private readonly string STRIPE_WEBHOOK_SECRET;
     
     public Function()
     {
         _dynamoClient = new AmazonDynamoDBClient();
+        
+        // Get Stripe keys from environment variables
+        STRIPE_SECRET_KEY = Environment.GetEnvironmentVariable("STRIPE_SECRET_KEY") 
+            ?? throw new InvalidOperationException("STRIPE_SECRET_KEY environment variable is required");
+        STRIPE_WEBHOOK_SECRET = Environment.GetEnvironmentVariable("STRIPE_WEBHOOK_SECRET") 
+            ?? throw new InvalidOperationException("STRIPE_WEBHOOK_SECRET environment variable is required");
+        
         StripeConfiguration.ApiKey = STRIPE_SECRET_KEY;
     }
 

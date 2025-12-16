@@ -125,7 +125,7 @@ export default function AdminOrders(): React.ReactElement {
       try {
         setLoadingUserId(orderId);
         const token = localStorage.getItem('token');
-        const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://kpk440vdkf.execute-api.eu-north-1.amazonaws.com/prod';
+        const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
         
         const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
           headers: {

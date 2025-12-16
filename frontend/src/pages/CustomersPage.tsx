@@ -85,7 +85,6 @@ export default function CustomersPage() {
           </div>
         ) : customers.length === 0 ? (
           <div className="py-12 text-center bg-white rounded-lg shadow">
-            <div className="mb-4 text-6xl">👥</div>
             <h3 className="mb-2 text-xl font-semibold text-gray-900">No Customers Found</h3>
             <p className="text-gray-600">No customers have registered yet.</p>
           </div>
@@ -136,8 +135,8 @@ export default function CustomersPage() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex px-2 text-xs font-semibold leading-5 rounded-full ${
                           customer.role === 'admin'
-                            ? 'bg-purple-100 text-purple-800'
-                            : 'bg-green-100 text-green-800'
+                            ? 'bg-blue-300 text-blue-800'
+                            : 'bg-blue-100 text-blue-600'
                         }`}>
                           {customer.role}
                         </span>

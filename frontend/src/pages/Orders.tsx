@@ -163,23 +163,23 @@ export default function Orders(): React.ReactElement {
                   <div className="flex flex-col items-end gap-2">
                     <span className={`px-4 py-2 rounded-full text-sm font-semibold ${
                       order.paymentStatus === 'completed' 
-                        ? 'bg-green-100 text-green-800' 
+                        ? 'bg-blue-100 text-gray-800' 
                         : order.paymentStatus === 'pending'
                         ? 'bg-yellow-100 text-yellow-800'
                         : 'bg-red-100 text-red-800'
                     }`}>
                       {order.paymentStatus === 'completed' ? '✓ Paid' : 
-                       order.paymentStatus === 'pending' ? '⏳ Pending' : '✗ Failed'}
+                       order.paymentStatus === 'pending' ? ' Pending' : '✗ Failed'}
                     </span>
                     <span className={`px-4 py-2 rounded-full text-sm font-semibold ${
-                      orderStatus === 'delivered' ? 'bg-green-100 text-green-800' :
+                      orderStatus === 'delivered' ? 'bg-blue-100 text-blue-800' :
                       orderStatus === 'shipped' ? 'bg-blue-100 text-blue-800' :
-                      orderStatus === 'processing' ? 'bg-yellow-100 text-yellow-800' :
+                      orderStatus === 'processing' ? 'bg-blue-100 text-blue-800' :
                       'bg-red-100 text-red-800'
                     }`}>
-                      {orderStatus === 'delivered' ? '📦 Delivered' :
-                       orderStatus === 'shipped' ? '🚚 Shipped' :
-                       orderStatus === 'processing' ? '⏱️ Processing' :
+                      {orderStatus === 'delivered' ? ' Delivered' :
+                       orderStatus === 'shipped' ? 'Shipped' :
+                       orderStatus === 'processing' ? 'Processing' :
                        '❌ Cancelled'}
                     </span>
                   </div>
@@ -235,14 +235,7 @@ export default function Orders(): React.ReactElement {
         </div>
       )}
 
-      <div className="mt-8 text-center">
-        <button
-          onClick={() => navigate('/customer')}
-          className="font-medium text-indigo-600 hover:text-indigo-700"
-        >
-          ← Back to Products
-        </button>
-      </div>
+      
     </div>
   );
 }

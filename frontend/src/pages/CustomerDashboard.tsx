@@ -67,7 +67,7 @@ export default function CustomerDashboard() {
               products.map((product) => (
                 <div 
                   key={product.productId} 
-                  className="overflow-hidden transition-all duration-200 bg-white border border-gray-200 rounded-lg cursor-pointer hover:shadow-xl group"
+                  className="overflow-hidden transition-all duration-200 bg-white border-2 border-gray-300 rounded-lg cursor-pointer hover:shadow-xl group"
                   onClick={() => navigate(`/product/${product.productId}`)}
                 >
                   <div className="relative flex items-center justify-center overflow-hidden bg-gray-100 aspect-square">
@@ -89,7 +89,7 @@ export default function CustomerDashboard() {
                             btn.innerHTML = originalHTML;
                           }, 1000);
                         }}
-                        className="absolute bottom-2 right-2 bg-indigo-600 hover:bg-indigo-700 text-white p-2.5 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-200 transform hover:scale-110"
+                        className="absolute bottom-2 right-2 bg-black text-white p-2.5 rounded-full border-white shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-200 transform hover:scale-110"
                         title="Add to cart"
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

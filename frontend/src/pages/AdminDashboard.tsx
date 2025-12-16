@@ -12,7 +12,8 @@ export default function AdminDashboard() {
     totalSales: 0,
     totalOrders: 0,
     processingOrders: 0,
-    totalProducts: 0
+    totalProducts: 0,
+    totalUsers: 0
   });
   const [loading, setLoading] = useState(true);
 
@@ -32,11 +33,32 @@ export default function AdminDashboard() {
       // Fetch products
       const products = await productService.getProducts();
       
+      // Fetch users
+      let totalUsers = 0;
+      try {
+        const token = localStorage.getItem('token');
+        const API_BASE_URL = 'https://kpk440vdkf.execute-api.eu-north-1.amazonaws.com/prod';
+        const response = await fetch(`${API_BASE_URL}/admin/users`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          totalUsers = data.users?.length || 0;
+        }
+      } catch (err) {
+        console.error('Failed to fetch users:', err);
+      }
+      
       setStats({
         totalSales,
         totalOrders: orders.length,
         processingOrders,
-        totalProducts: products.length
+        totalProducts: products.length,
+        totalUsers
       });
     } catch (error) {
       console.error('Failed to load stats:', error);
@@ -53,13 +75,13 @@ export default function AdminDashboard() {
             Admin Dashboard
           </h1>
           <p className="text-gray-600">
-            Welcome back, <span className="font-semibold text-indigo-600">{user?.name}</span>
+            Welcome back, <span className="font-semibold text-blue-800">{user?.name}</span>
           </p>
         </div>
 
         {loading ? (
           <div className="py-8 text-center">
-            <div className="inline-block w-8 h-8 border-b-2 border-indigo-600 rounded-full animate-spin"></div>
+            <div className="inline-block w-8 h-8 border-b-2 border-blue-800 rounded-full animate-spin"></div>
             <p className="mt-2 text-gray-600">Loading statistics...</p>
           </div>
         ) : (
@@ -68,9 +90,9 @@ export default function AdminDashboard() {
               <div className="p-6 transition-shadow bg-white rounded-lg shadow-lg cursor-pointer hover:shadow-xl">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold text-gray-900">Total Sales</h3>
-                  <span className="text-3xl">💰</span>
+                  
                 </div>
-                <p className="text-3xl font-bold text-indigo-600">${stats.totalSales.toFixed(2)}</p>
+                <p className="text-3xl font-bold text-blue-800">${stats.totalSales.toFixed(2)}</p>
                 <p className="mt-2 text-sm text-gray-500">From {stats.totalOrders} order{stats.totalOrders !== 1 ? 's' : ''}</p>
               </div>
 
@@ -80,31 +102,10 @@ export default function AdminDashboard() {
               >
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold text-gray-900">Total Orders</h3>
-                  <span className="text-3xl">📦</span>
+               
                 </div>
-                <p className="text-3xl font-bold text-green-600">{stats.totalOrders}</p>
+                <p className="text-3xl font-bold text-blue-800">{stats.totalOrders}</p>
                 <p className="mt-2 text-sm text-gray-500">{stats.processingOrders} processing</p>
-              </div>
-
-              <div className="p-6 bg-white rounded-lg shadow-lg">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900">Customers</h3>
-                  <span className="text-3xl">👥</span>
-                </div>
-                <p className="text-3xl font-bold text-purple-600">-</p>
-                <p className="mt-2 text-sm text-gray-500">Coming soon</p>
-              </div>
-
-              <div 
-                className="p-6 transition-shadow bg-white rounded-lg shadow-lg cursor-pointer hover:shadow-xl"
-                onClick={() => navigate('/admin/products')}
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900">Total Products</h3>
-                  <span className="text-3xl">📦</span>
-                </div>
-                <p className="text-3xl font-bold text-indigo-600">{stats.totalProducts}</p>
-                <p className="mt-2 text-sm text-gray-500">Items in inventory</p>
               </div>
 
               <div 
@@ -113,11 +114,25 @@ export default function AdminDashboard() {
               >
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold text-gray-900">Customers</h3>
-                  <span className="text-3xl">👥</span>
+                 
                 </div>
-                <p className="text-3xl font-bold text-indigo-600">View All</p>
+                <p className="text-3xl font-bold text-blue-800">{stats.totalUsers}</p>
                 <p className="mt-2 text-sm text-gray-500">Registered users</p>
               </div>
+
+              <div 
+                className="p-6 transition-shadow bg-white rounded-lg shadow-lg cursor-pointer hover:shadow-xl"
+                onClick={() => navigate('/admin/products')}
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900">Total Products</h3>
+               
+                </div>
+                <p className="text-3xl font-bold text-blue-800">{stats.totalProducts}</p>
+                <p className="mt-2 text-sm text-gray-500">Items in inventory</p>
+              </div>
+
+           
             </div>
           </>
         )}
@@ -131,30 +146,30 @@ export default function AdminDashboard() {
                 className="flex items-center justify-between w-full p-4 transition-colors rounded-lg bg-indigo-50 hover:bg-indigo-100"
               >
                 <div className="flex items-center space-x-3">
-                  <span className="text-2xl">📦</span>
+                
                   <span className="font-medium text-gray-900">Manage Products</span>
                 </div>
                 <span className="text-indigo-600">→</span>
               </button>
               <button
                 onClick={() => navigate('/admin/orders')}
-                className="flex items-center justify-between w-full p-4 transition-colors rounded-lg bg-green-50 hover:bg-green-100"
+                className="flex items-center justify-between w-full p-4 transition-colors rounded-lg bg-indigo-50 hover:bg-green-100"
               >
                 <div className="flex items-center space-x-3">
-                  <span className="text-2xl">🛒</span>
+              
                   <span className="font-medium text-gray-900">View Orders</span>
                 </div>
-                <span className="text-green-600">→</span>
+                <span className="text-indigo-600">→</span>
               </button>
               <button
-                className="flex items-center justify-between w-full p-4 bg-gray-100 rounded-lg opacity-50 cursor-not-allowed"
-                disabled
+                onClick={() => navigate('/admin/customers')}
+                className="flex items-center justify-between w-full p-4 transition-colors rounded-lg bg-indigo-50 hover:bg-purple-100"
               >
                 <div className="flex items-center space-x-3">
-                  <span className="text-2xl">👥</span>
+                
                   <span className="font-medium text-gray-900">Customer List</span>
                 </div>
-                <span className="text-gray-400">Coming soon</span>
+                <span className="text-blue-600">→</span>
               </button>
             </div>
           </div>
@@ -164,7 +179,7 @@ export default function AdminDashboard() {
             <div className="space-y-4">
               <div className="flex items-center justify-between py-2 border-b">
                 <span className="text-gray-600">Role</span>
-                <span className="font-semibold text-indigo-600 uppercase">{user?.role}</span>
+                <span className="font-semibold text-blue-600 uppercase">{user?.role}</span>
               </div>
               <div className="flex items-center justify-between py-2 border-b">
                 <span className="text-gray-600">Email</span>

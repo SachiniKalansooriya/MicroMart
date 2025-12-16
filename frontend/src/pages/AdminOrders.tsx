@@ -190,23 +190,23 @@ export default function AdminOrders(): React.ReactElement {
         <div className="grid grid-cols-1 gap-6 mb-8 md:grid-cols-4">
           <div className="p-6 bg-white rounded-lg shadow-md">
             <p className="text-sm text-gray-600">Total Orders</p>
-            <p className="text-3xl font-bold text-indigo-600">{orders.length}</p>
+            <p className="text-3xl font-bold text-blue-800">{orders.length}</p>
           </div>
           <div className="p-6 bg-white rounded-lg shadow-md">
             <p className="text-sm text-gray-600">Processing</p>
-            <p className="text-3xl font-bold text-yellow-600">
+            <p className="text-3xl font-bold text-blue-800">
               {orders.filter(o => (o.orderStatus || 'processing') === 'processing').length}
             </p>
           </div>
           <div className="p-6 bg-white rounded-lg shadow-md">
             <p className="text-sm text-gray-600">Shipped</p>
-            <p className="text-3xl font-bold text-blue-600">
+            <p className="text-3xl font-bold text-blue-800">
               {orders.filter(o => o.orderStatus === 'shipped').length}
             </p>
           </div>
           <div className="p-6 bg-white rounded-lg shadow-md">
             <p className="text-sm text-gray-600">Delivered</p>
-            <p className="text-3xl font-bold text-green-600">
+            <p className="text-3xl font-bold text-blue-800">
               {orders.filter(o => o.orderStatus === 'delivered').length}
             </p>
           </div>

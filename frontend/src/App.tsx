@@ -34,13 +34,13 @@ function App() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      <nav className="text-white bg-indigo-600 shadow-lg">
+      <nav className="text-white bg-blue-800 shadow-lg">
         <div className="max-w-full px-4 mx-auto sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Left side - Logo */}
             <div className="flex-shrink-0">
               <Link to="/" className="text-2xl font-bold transition-colors hover:text-indigo-100">
-                🛒 MicroMart
+                 MicroMart
               </Link>
             </div>
 
@@ -78,7 +78,7 @@ function App() {
                       </Link>
                       <Link 
                         to="/cart"
-                        className="relative p-2 transition-colors rounded-md hover:bg-indigo-700"
+                        className="relative p-2 transition-colors bg-gray-900 rounded-md"
                         title="My Cart"
                       >
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -87,7 +87,7 @@ function App() {
                       </Link>
                       <Link 
                         to="/orders"
-                        className="p-2 transition-colors rounded-md hover:bg-indigo-700"
+                        className="p-2 transition-colors bg-gray-900 rounded-md"
                         title="My Orders"
                       >
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -98,9 +98,9 @@ function App() {
                   )}
                   <Link 
                     to="/profile"
-                    className="flex items-center gap-2 px-3 py-2 font-medium transition-colors rounded-md hover:bg-indigo-700"
+                    className="flex items-center gap-2 px-3 py-2 font-medium transition-colors rounded-md "
                   >
-                    <div className="flex items-center justify-center w-10 h-10 overflow-hidden text-sm font-bold text-white border-2 border-white rounded-full shadow-lg bg-gradient-to-br from-blue-500 to-purple-600">
+                    <div className="flex items-center justify-center w-10 h-10 overflow-hidden text-sm font-bold text-white border-2 border-white rounded-full shadow-lg bg-gradient-to-br from-blue-900 to-blue-900">
                       {user.name?.[0]?.toUpperCase() || 'U'}
                     </div>
                   </Link>

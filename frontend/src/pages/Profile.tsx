@@ -16,7 +16,7 @@ export default function Profile() {
 
         <div className="overflow-hidden bg-white shadow-xl rounded-2xl">
           {/* Header with gradient background */}
-          <div className="px-8 py-12 bg-gradient-to-r from-indigo-600 to-purple-600">
+          <div className="px-8 py-12 bg-gradient-to-r from-blue-800 to-blue-900">
             <div className="flex items-center gap-6">
               {/* Profile Picture */}
               <div className="relative">
@@ -25,7 +25,7 @@ export default function Profile() {
                     {user.name.charAt(0).toUpperCase()}
                   </span>
                 </div>
-                <div className="absolute bottom-0 right-0 w-6 h-6 bg-green-400 border-4 border-white rounded-full"></div>
+                <div className="absolute bottom-0 right-0 w-6 h-6 bg-blue-400 border-4 border-white rounded-full"></div>
               </div>
 
               {/* User Name and Role */}
@@ -33,7 +33,7 @@ export default function Profile() {
                 <h1 className="mb-2 text-3xl font-bold text-white">{user.name}</h1>
                 <div className="flex items-center gap-2">
                   <span className="inline-flex items-center px-3 py-1 text-sm font-semibold text-white rounded-full bg-white/20 backdrop-blur-sm">
-                    {user.role === 'admin' ? '👑 Admin' : '👤 Customer'}
+                    {user.role === 'admin' ? ' Admin' : ' Customer'}
                   </span>
                 </div>
               </div>

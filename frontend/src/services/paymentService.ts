@@ -1,6 +1,7 @@
 import { authService } from './authService';
+import { config } from '../config/env';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ;
+const API_BASE_URL = config.apiBaseUrl;
 
 interface CheckoutSessionResponse {
   sessionId: string;
@@ -14,10 +15,12 @@ interface CheckoutItem {
 
 interface Order {
   orderId: string;
+  userId: string;
   productId: string;
   quantity: number;
   totalAmount: number;
   paymentStatus: string;
+  orderStatus?: string;
   createdAt: string;
 }
 

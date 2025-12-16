@@ -33,8 +33,8 @@ function App() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <nav className="text-white bg-blue-800 shadow-lg">
+     <div className="flex flex-col min-h-screen bg-[#e2f3ff]" >
+      <nav className="fixed top-0 left-0 right-0 z-50 text-white shadow-lg" style={{ backgroundColor: '#0A1931' }}>
         <div className="max-w-full px-4 mx-auto sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Left side - Logo */}
@@ -117,47 +117,73 @@ function App() {
         </div>
       </nav>
 
-      <main className="flex-1">
+      <main className="flex-1 pt-16">
         <Routes>
           <Route
             path="/"
             element={
-              <div className="min-h-[80vh] flex items-center justify-center px-4">
-                <div className="text-center">
-                  <h1 className="mb-4 text-5xl font-bold text-gray-900">
-                    Welcome to MicroMart
-                  </h1>
-                  <p className="mb-8 text-xl text-gray-600">
-                    Your microservices e-commerce platform with role-based authentication
-                  </p>
-                  {!user ? (
-                    <div className="flex justify-center gap-4">
-                      <Link
-                        to="/login"
-                        className="px-6 py-3 font-semibold text-white transition-colors bg-indigo-600 rounded-lg hover:bg-indigo-700"
-                      >
-                        Login
-                      </Link>
-                      <Link
-                        to="/register"
-                        className="px-6 py-3 font-semibold text-indigo-600 transition-colors bg-white border-2 border-indigo-600 rounded-lg hover:bg-gray-50"
-                      >
-                        Register
-                      </Link>
+              <div 
+                className="min-h-[90vh] flex items-center justify-center px-4 py-12 bg-fixed bg-cover bg-center bg-no-repeat relative"
+                style={{ backgroundImage: "url('/background.jpg')" }}
+              >
+                {/* Subtle overlay for better readability */}
+                <div className="absolute inset-0 bg-white/30 backdrop-blur-sm"></div>
+                
+                <div className="relative z-10 grid items-center w-full grid-cols-1 gap-12 px-4 max-w-7xl lg:gap-16 lg:grid-cols-2">
+                  {/* Left side - Bags Image */}
+                  <div className="items-center justify-center hidden lg:flex">
+                    <div className="relative group">
+                      <div className="absolute transition duration-1000 rounded-lg opacity-25 -inset-1 bg-gradient-to-r from-indigo-600 to-purple-600 blur group-hover:opacity-40"></div>
+                      <img 
+                        src="/bags.jpg" 
+                        alt="Shopping bags" 
+                        className="relative object-contain w-full h-auto max-w-md transition duration-500 transform rounded-lg shadow-2xl hover:scale-105"
+                      />
                     </div>
-                  ) : (
+                  </div>
+
+                  {/* Right side - Content */}
+                  <div className="p-8 space-y-6 text-center shadow-2xl lg:text-left bg-white/80 backdrop-blur-md lg:p-10 rounded-2xl">
                     <div className="space-y-4">
-                      <p className="text-lg text-gray-700">
-                        Welcome back, <span className="font-semibold text-indigo-600">{user.name}</span>!
-                      </p>
-                      <Link
-                        to="/dashboard"
-                        className="inline-block px-6 py-3 font-semibold text-white transition-colors bg-indigo-600 rounded-lg hover:bg-indigo-700"
-                      >
-                        Go to Dashboard
-                      </Link>
+                      <h1 className="text-5xl font-extrabold leading-tight text-transparent lg:text-6xl bg-clip-text bg-gradient-to-r text-[#1A3D63]">
+                        Welcome to MicroMart
+                      </h1>
+                      <div className="w-24 h-1 mx-auto rounded-full "></div>
                     </div>
-                  )}
+                    
+                    <p className="text-lg leading-relaxed text-gray-700 lg:text-xl">
+                   Where Great Deals Meet Trusted Quality.
+                    </p>
+                    
+                    {!user ? (
+                      <div className="flex flex-col justify-center gap-4 pt-4 sm:flex-row lg:justify-start">
+                        <Link
+                          to="/login"
+                          className="px-8 py-4 font-semibold text-black transition-all duration-300 transform bg-gradient-to-r bg-[#B3CFE5]  rounded-xl hover:shadow-lg hover:scale-105"
+                        >
+                          Login
+                        </Link>
+                        <Link
+                          to="/register"
+                          className="px-8 py-4 font-semibold text-[#1A3D63] transition-all duration-300 transform bg-white border-2 border-[#1A3D63] rounded-xl  hover:shadow-lg hover:scale-105"
+                        >
+                          Register
+                        </Link>
+                      </div>
+                    ) : (
+                      <div className="pt-4 space-y-6">
+                        <p className="text-xl text-gray-700">
+                          Welcome back, <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">{user.name}</span>!
+                        </p>
+                        <Link
+                          to="/dashboard"
+                          className="inline-block px-8 py-4 font-semibold text-white transition-all duration-300 transform bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl hover:shadow-lg hover:scale-105"
+                        >
+                          Go to Dashboard
+                        </Link>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             }

@@ -37,8 +37,7 @@ export default function AdminDashboard() {
       let totalUsers = 0;
       try {
         const token = localStorage.getItem('token');
-        const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-        const response = await fetch(`${API_BASE_URL}/admin/users`, {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/admin/users`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
@@ -143,7 +142,7 @@ export default function AdminDashboard() {
             <div className="space-y-3">
               <button
                 onClick={() => navigate('/admin/products')}
-                className="flex items-center justify-between w-full p-4 transition-colors rounded-lg bg-indigo-50 hover:bg-indigo-100"
+                className="flex items-center justify-between w-full p-4 transition-colors rounded-lg bg-indigo-50 hover:bg-[#B3CFE5]"
               >
                 <div className="flex items-center space-x-3">
                 
@@ -153,7 +152,7 @@ export default function AdminDashboard() {
               </button>
               <button
                 onClick={() => navigate('/admin/orders')}
-                className="flex items-center justify-between w-full p-4 transition-colors rounded-lg bg-indigo-50 hover:bg-green-100"
+                className="flex items-center justify-between w-full p-4 transition-colors rounded-lg bg-indigo-50 hover:bg-[#B3CFE5]"
               >
                 <div className="flex items-center space-x-3">
               
@@ -163,7 +162,7 @@ export default function AdminDashboard() {
               </button>
               <button
                 onClick={() => navigate('/admin/customers')}
-                className="flex items-center justify-between w-full p-4 transition-colors rounded-lg bg-indigo-50 hover:bg-purple-100"
+                className="flex items-center justify-between w-full p-4 transition-colors rounded-lg bg-indigo-50 hover:bg-[#B3CFE5]"
               >
                 <div className="flex items-center space-x-3">
                 

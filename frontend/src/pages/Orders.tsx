@@ -81,7 +81,7 @@ export default function Orders(): React.ReactElement {
   }
 
   return (
-    <div className="px-4 py-12 mx-auto max-w-7xl">
+    <div className="px-4 py-12 mx-auto max-w-7xl ">
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">My Orders</h1>
@@ -100,7 +100,7 @@ export default function Orders(): React.ReactElement {
           <button
             onClick={() => loadOrders()}
             disabled={loading || refreshing}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white transition-colors bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-black transition-colors rounded-lg bg-[#afd0e9]  disabled:opacity-50 disabled:cursor-not-allowed"
             title="Refresh orders"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -116,7 +116,7 @@ export default function Orders(): React.ReactElement {
           <p className="mb-2 font-semibold">Error loading orders:</p>
           <p>{error}</p>
           <button
-            onClick={loadOrders}
+            onClick={() => loadOrders()}
             className="px-4 py-2 mt-4 text-sm font-semibold text-white transition-colors bg-red-600 rounded hover:bg-red-700"
           >
             Try Again
@@ -131,7 +131,7 @@ export default function Orders(): React.ReactElement {
           <p className="mb-6 text-gray-600">Start shopping to see your orders here</p>
           <button
             onClick={() => navigate('/customer')}
-            className="px-6 py-3 font-semibold text-white transition-colors bg-indigo-600 rounded-lg hover:bg-indigo-700"
+            className="px-6 py-3 font-semibold text-white transition-colors bg-[#e8f3fa] rounded-lg "
           >
             Browse Products
           </button>
@@ -143,7 +143,7 @@ export default function Orders(): React.ReactElement {
             const orderStatus = order.orderStatus || 'processing';
             
             return (
-            <div key={order.orderId} className="overflow-hidden bg-white rounded-lg shadow-md">
+            <div key={order.orderId} className="overflow-hidden bg-[#f4fbff] rounded-lg shadow-md">
               <div className="p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div>
@@ -221,7 +221,7 @@ export default function Orders(): React.ReactElement {
                     </div>
                     <div>
                       <p className="text-sm text-gray-500">Total Amount</p>
-                      <p className="mt-1 text-2xl font-bold text-indigo-600">
+                      <p className="mt-1 text-2xl font-bold text-[#0b6095]">
                         ${order.totalAmount.toFixed(2)}
                       </p>
                     </div>

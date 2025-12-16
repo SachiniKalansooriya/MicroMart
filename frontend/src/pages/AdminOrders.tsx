@@ -355,11 +355,11 @@ export default function AdminOrders(): React.ReactElement {
                                 <p className="mt-1 text-sm text-gray-900 capitalize">{userDetails[order.userId].role}</p>
                               </div>
                             )}
-                            {userDetails[order.userId].createdAt && (
+                            {userDetails[order.userId]?.createdAt && (
                               <div>
                                 <p className="text-xs text-gray-500">Member Since</p>
                                 <p className="mt-1 text-sm text-gray-900">
-                                  {new Date(userDetails[order.userId].createdAt).toLocaleDateString('en-US', {
+                                  {new Date(userDetails[order.userId].createdAt!).toLocaleDateString('en-US', {
                                     year: 'numeric',
                                     month: 'long',
                                     day: 'numeric'

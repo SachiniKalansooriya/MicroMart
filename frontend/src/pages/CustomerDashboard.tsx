@@ -6,7 +6,7 @@ import productService, { type Product } from '../services/productService';
 
 export default function CustomerDashboard() {
   const { user } = useAuth();
-  const { addToCart, getCartCount } = useCart();
+  const { addToCart } = useCart();
   const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -29,15 +29,13 @@ export default function CustomerDashboard() {
   };
 
   return (
-    <div className="px-4 py-12 mx-auto max-w-[1600px]">
-      <div className="p-8 bg-white rounded-lg shadow-lg">
+    <div className="px-4 py-12 mx-auto max-w-[1600px] ">
+      <div className="p-8 bg-[#e8f3fa] rounded-lg shadow-lg">
         <div className="mb-8">
           <h2 className="mb-2 text-3xl font-bold text-gray-900">
-            Customer Dashboard
+           Welcome, <span className="font-semibold text-[#1A3D63]">{user?.name}</span>!
           </h2>
-          <p className="text-gray-600">
-            Welcome, <span className="font-semibold text-indigo-600">{user?.name}</span>!
-          </p>
+          
         </div>
 
         

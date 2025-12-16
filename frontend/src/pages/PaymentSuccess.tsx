@@ -33,16 +33,16 @@ export default function PaymentSuccess(): React.ReactElement {
   }, [searchParams, navigate, showNotification]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="text-center p-12 bg-white rounded-2xl shadow-2xl max-w-md">
-        <div className="text-6xl mb-6">✅</div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">Payment Successful!</h1>
-        <p className="text-gray-600 mb-2">Thank you for your purchase.</p>
-        <p className="text-gray-600 mb-6">Your order has been confirmed.</p>
-        <p className="text-sm text-gray-500 mb-6">Redirecting to orders page in {countdown} seconds...</p>
+    <div className="flex items-center justify-center min-h-screen bg-[#d2dfe9]">
+      <div className="max-w-md p-12 text-center bg-white shadow-2xl rounded-2xl">
+        <div className="mb-6 text-6xl">✅</div>
+        <h1 className="mb-4 text-3xl font-bold text-gray-900">Payment Successful!</h1>
+        <p className="mb-2 text-gray-600">Thank you for your purchase.</p>
+        <p className="mb-6 text-gray-600">Your order has been confirmed.</p>
+        <p className="mb-6 text-sm text-gray-500">Redirecting to orders page in {countdown} seconds...</p>
         <button 
           onClick={() => navigate('/orders')}
-          className="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors"
+          className="px-6 py-3 bg-[#1a3d63] text-white font-semibold rounded-lg  transition-colors"
         >
           View Orders Now
         </button>

@@ -1,7 +1,8 @@
 // frontend/src/services/s3Service.ts
 import { authService } from './authService';
+import { config } from '../config/env';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ;
+const API_BASE_URL = config.apiBaseUrl;
 
 export interface PresignedUrlResponse {
   uploadUrl: string;

@@ -176,7 +176,7 @@ export default function AdminOrders(): React.ReactElement {
               const color = getStatusColor(orderStatus);
               
               return (
-                <div key={order.orderId} className="overflow-hidden bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                <div key={order.orderId} className="overflow-hidden transition-shadow bg-white rounded-lg shadow-md hover:shadow-lg">
                   <div className="p-6">
                     <div className="flex items-start justify-between mb-4">
                       <div>
@@ -196,7 +196,7 @@ export default function AdminOrders(): React.ReactElement {
                           })}
                         </p>
                       </div>
-                      <div className="flex flex-col gap-2 items-end">
+                      <div className="flex flex-col items-end gap-2">
                         <span className={`px-4 py-2 rounded-full text-sm font-semibold ${
                           order.paymentStatus === 'completed' 
                             ? 'bg-green-100 text-green-800' 
@@ -212,16 +212,16 @@ export default function AdminOrders(): React.ReactElement {
 
                     <div className="flex gap-4 py-4 border-t border-gray-200">
                       {/* Product Image */}
-                      <div className="flex-shrink-0 w-24 h-24 bg-gray-100 rounded-lg overflow-hidden">
+                      <div className="flex-shrink-0 w-24 h-24 overflow-hidden bg-gray-100 rounded-lg">
                         {product?.imageUrl ? (
                           <img 
                             src={product.imageUrl} 
                             alt={product.name} 
-                            className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
+                            className="object-cover w-full h-full transition-opacity cursor-pointer hover:opacity-80"
                             onClick={() => navigate(`/product/${order.productId}`)}
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-gray-400 text-3xl">
+                          <div className="flex items-center justify-center w-full h-full text-3xl text-gray-400">
                             📦
                           </div>
                         )}
@@ -229,7 +229,7 @@ export default function AdminOrders(): React.ReactElement {
 
                       {/* Product Details */}
                       <div className="flex-1">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                           <div>
                             <p className="text-sm text-gray-500">Product</p>
                             <p className="mt-1 font-semibold text-gray-900">
@@ -258,7 +258,7 @@ export default function AdminOrders(): React.ReactElement {
                     {/* Status Update Section */}
                     <div className="pt-4 mt-4 border-t border-gray-200">
                       <p className="mb-2 text-sm font-medium text-gray-700">Update Order Status:</p>
-                      <div className="flex gap-2 flex-wrap">
+                      <div className="flex flex-wrap gap-2">
                         {ORDER_STATUSES.map((status) => (
                           <button
                             key={status.value}

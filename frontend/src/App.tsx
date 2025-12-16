@@ -12,6 +12,7 @@ import Unauthorized from './pages/Unauthorized'
 import ProductsPage from './pages/ProductsPage'
 import Profile from './pages/Profile'
 import Cart from './pages/Cart'
+import CustomersPage from './pages/CustomersPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import { useAuth } from './contexts/AuthContext'
 import { authService } from './services/authService'
@@ -201,6 +202,16 @@ function App() {
             element={
               <ProtectedRoute requireAdmin>
                 <AdminOrders />
+              </ProtectedRoute>
+            }
+          />
+          
+          {/* Admin Customers route */}
+          <Route
+            path="/admin/customers"
+            element={
+              <ProtectedRoute requireAdmin>
+                <CustomersPage />
               </ProtectedRoute>
             }
           />

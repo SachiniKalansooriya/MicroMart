@@ -100,11 +100,23 @@ export default function AdminDashboard() {
                 onClick={() => navigate('/admin/products')}
               >
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900">Products</h3>
-                  <span className="text-3xl">🛍️</span>
+                  <h3 className="text-lg font-semibold text-gray-900">Total Products</h3>
+                  <span className="text-3xl">📦</span>
                 </div>
-                <p className="text-3xl font-bold text-orange-600">{stats.totalProducts}</p>
-                <p className="mt-2 text-sm text-gray-500">In catalog</p>
+                <p className="text-3xl font-bold text-indigo-600">{stats.totalProducts}</p>
+                <p className="mt-2 text-sm text-gray-500">Items in inventory</p>
+              </div>
+
+              <div 
+                className="p-6 transition-shadow bg-white rounded-lg shadow-lg cursor-pointer hover:shadow-xl"
+                onClick={() => navigate('/admin/customers')}
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900">Customers</h3>
+                  <span className="text-3xl">👥</span>
+                </div>
+                <p className="text-3xl font-bold text-indigo-600">View All</p>
+                <p className="mt-2 text-sm text-gray-500">Registered users</p>
               </div>
             </div>
           </>

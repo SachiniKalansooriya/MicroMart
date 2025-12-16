@@ -11,6 +11,7 @@ import AdminOrders from './pages/AdminOrders'
 import Unauthorized from './pages/Unauthorized'
 import ProductsPage from './pages/ProductsPage'
 import Profile from './pages/Profile'
+import Cart from './pages/Cart'
 import ProtectedRoute from './components/ProtectedRoute'
 import { useAuth } from './contexts/AuthContext'
 import { authService } from './services/authService'
@@ -74,7 +75,7 @@ function App() {
                   </span>
                   <button
                     onClick={logout}
-                    className="px-4 py-2 font-medium transition-colors bg-red-700 rounded-md "
+                    className="px-4 py-2 font-medium transition-colors bg-red-700 rounded-md hover:bg-red-800"
                   >
                     Logout
                   </button>
@@ -214,6 +215,16 @@ function App() {
             }
           />
           
+          {/* Cart route */}
+          <Route
+            path="/cart"
+            element={
+              <ProtectedRoute requireCustomer>
+                <Cart />
+              </ProtectedRoute>
+            }
+          />
+          
           {/* Payment Success route */}
           <Route
             path="/payment/success"
@@ -223,7 +234,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          
+
           {/* Payment Cancel route */}
           <Route
             path="/payment/cancel"

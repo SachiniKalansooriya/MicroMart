@@ -119,28 +119,74 @@ public class Function
     {
         try
         {
+            context.Logger.LogInformation($"Raw request body: {request.Body}");
+            
             var checkoutRequest = JsonSerializer.Deserialize<CheckoutRequest>(
                 request.Body,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
             );
 
-            if (string.IsNullOrEmpty(checkoutRequest?.ProductId))
+            context.Logger.LogInformation($"Deserialized: ProductId={checkoutRequest?.ProductId}, Items count={checkoutRequest?.Items?.Count ?? 0}");
+
+            // Support both single product and multiple items
+            var items = new List<CheckoutItem>();
+            
+            if (checkoutRequest?.Items != null && checkoutRequest.Items.Count > 0)
             {
-                return CreateResponse(400, new { error = "Product ID required" });
+                // Multiple items checkout
+                items = checkoutRequest.Items;
+                context.Logger.LogInformation($"Creating checkout for {items.Count} items");
+            }
+            else if (!string.IsNullOrEmpty(checkoutRequest?.ProductId))
+            {
+                // Single product checkout (backward compatibility)
+                items.Add(new CheckoutItem 
+                { 
+                    ProductId = checkoutRequest.ProductId, 
+                    Quantity = checkoutRequest.Quantity ?? 1 
+                });
+                context.Logger.LogInformation($"Creating checkout for single product");
+            }
+            else
+            {
+                return CreateResponse(400, new { error = "Product ID or Items required" });
             }
 
             // Get product details from DynamoDB
             var productTable = Table.LoadTable(_dynamoClient, PRODUCTS_TABLE);
-            var product = await productTable.GetItemAsync(checkoutRequest.ProductId);
+            var lineItems = new List<SessionLineItemOptions>();
+            var itemsMetadata = new List<string>();
 
-            if (product == null)
+            foreach (var item in items)
             {
-                return CreateResponse(404, new { error = "Product not found" });
-            }
+                var product = await productTable.GetItemAsync(item.ProductId);
+                if (product == null)
+                {
+                    return CreateResponse(404, new { error = $"Product {item.ProductId} not found" });
+                }
 
-            var productName = product["name"].AsString();
-            var productPrice = product["price"].AsDecimal();
-            var quantity = checkoutRequest.Quantity ?? 1;
+                var productName = product["name"].AsString();
+                var productPrice = product["price"].AsDecimal();
+
+                lineItems.Add(new SessionLineItemOptions
+                {
+                    PriceData = new SessionLineItemPriceDataOptions
+                    {
+                        UnitAmount = (long)(productPrice * 100), // Amount in cents
+                        Currency = "usd",
+                        ProductData = new SessionLineItemPriceDataProductDataOptions
+                        {
+                            Name = productName,
+                            Description = product.ContainsKey("description") 
+                                ? product["description"].AsString() 
+                                : ""
+                        }
+                    },
+                    Quantity = item.Quantity
+                });
+
+                itemsMetadata.Add($"{item.ProductId}:{item.Quantity}");
+            }
 
             // Determine the frontend URL from the request origin or use localhost as fallback
             var origin = request.Headers?.ContainsKey("origin") == true 
@@ -151,41 +197,22 @@ public class Function
             var options = new SessionCreateOptions
             {
                 PaymentMethodTypes = new List<string> { "card" },
-                LineItems = new List<SessionLineItemOptions>
-                {
-                    new SessionLineItemOptions
-                    {
-                        PriceData = new SessionLineItemPriceDataOptions
-                        {
-                            UnitAmount = (long)(productPrice * 100), // Amount in cents
-                            Currency = "usd",
-                            ProductData = new SessionLineItemPriceDataProductDataOptions
-                            {
-                                Name = productName,
-                                Description = product.ContainsKey("description") 
-                                    ? product["description"].AsString() 
-                                    : ""
-                            }
-                        },
-                        Quantity = quantity
-                    }
-                },
+                LineItems = lineItems,
                 Mode = "payment",
                 SuccessUrl = $"{origin}/payment/success?session_id={{CHECKOUT_SESSION_ID}}",
                 CancelUrl = $"{origin}/payment/cancel",
                 Metadata = new Dictionary<string, string>
                 {
-                    { "userId", userId }, // Authenticated user ID (no longer "guest")
-                    { "productId", checkoutRequest.ProductId },
-                    { "quantity", quantity.ToString() }
+                    { "userId", userId },
+                    { "itemsData", JsonSerializer.Serialize(itemsMetadata) }
                 }
             };
 
             var service = new SessionService();
             var session = await service.CreateAsync(options);
 
-            context.Logger.LogInformation($"Checkout session created: {session.Id} for user: {userId}");
-            context.Logger.LogInformation("Order will be created only after successful payment via webhook");
+            context.Logger.LogInformation($"Checkout session created: {session.Id} for user: {userId} with {items.Count} items");
+            context.Logger.LogInformation("Orders will be created after successful payment via webhook");
 
             return CreateResponse(200, new
             {
@@ -297,59 +324,125 @@ public class Function
                     return CreateResponse(200, new { received = true, message = "Order already exists" });
                 }
                 
-                // Create new order ONLY when payment succeeds
+                // Create orders ONLY when payment succeeds
                 if (session.Metadata != null && 
-                    session.Metadata.ContainsKey("userId") && 
-                    session.Metadata.ContainsKey("productId") && 
-                    session.Metadata.ContainsKey("quantity") &&
+                    session.Metadata.ContainsKey("userId") &&
                     session.AmountTotal.HasValue)
                 {
-                    var order = new Document
+                    var userId = session.Metadata["userId"];
+                    var productsTable = Table.LoadTable(_dynamoClient, PRODUCTS_TABLE);
+                    var ordersCreated = 0;
+
+                    // Handle multiple items
+                    if (session.Metadata.ContainsKey("itemsData"))
                     {
-                        ["orderId"] = Guid.NewGuid().ToString(),
-                        ["userId"] = session.Metadata["userId"],
-                        ["productId"] = session.Metadata["productId"],
-                        ["quantity"] = int.Parse(session.Metadata["quantity"]),
-                        ["totalAmount"] = session.AmountTotal.Value / 100m,
-                        ["paymentStatus"] = "completed",
-                        ["orderStatus"] = "processing",
-                        ["stripeSessionId"] = session.Id,
-                        ["createdAt"] = DateTime.UtcNow.ToString("o"),
-                        ["paidAt"] = DateTime.UtcNow.ToString("o")
-                    };
+                        var itemsJson = session.Metadata["itemsData"];
+                        var itemsData = JsonSerializer.Deserialize<List<string>>(itemsJson);
+                        
+                        context.Logger.LogInformation($"Processing {itemsData.Count} items from metadata");
 
-                    await ordersTable.PutItemAsync(order);
-                    context.Logger.LogInformation($"Order created successfully: {order["orderId"]} for completed payment");
+                        foreach (var itemData in itemsData)
+                        {
+                            var parts = itemData.Split(':');
+                            if (parts.Length == 2)
+                            {
+                                var productId = parts[0];
+                                var quantity = int.Parse(parts[1]);
 
-                    // Decrement product stock
-                    try
+                                // Get product details for price
+                                var product = await productsTable.GetItemAsync(productId);
+                                if (product == null) continue;
+
+                                var productPrice = product["price"].AsDecimal();
+                                var itemTotal = productPrice * quantity;
+
+                                // Create order for this item
+                                var order = new Document
+                                {
+                                    ["orderId"] = Guid.NewGuid().ToString(),
+                                    ["userId"] = userId,
+                                    ["productId"] = productId,
+                                    ["quantity"] = quantity,
+                                    ["totalAmount"] = itemTotal,
+                                    ["paymentStatus"] = "completed",
+                                    ["orderStatus"] = "processing",
+                                    ["stripeSessionId"] = session.Id,
+                                    ["createdAt"] = DateTime.UtcNow.ToString("o"),
+                                    ["paidAt"] = DateTime.UtcNow.ToString("o")
+                                };
+
+                                await ordersTable.PutItemAsync(order);
+                                ordersCreated++;
+                                context.Logger.LogInformation($"Order created: {order["orderId"]} for product {productId}");
+
+                                // Update stock
+                                try
+                                {
+                                    if (product.ContainsKey("stock"))
+                                    {
+                                        var currentStock = product["stock"].AsInt();
+                                        var newStock = Math.Max(0, currentStock - quantity);
+                                        product["stock"] = newStock;
+                                        await productsTable.UpdateItemAsync(product);
+                                        context.Logger.LogInformation($"Stock updated for {productId}: {currentStock} -> {newStock}");
+                                    }
+                                }
+                                catch (Exception stockEx)
+                                {
+                                    context.Logger.LogError($"Failed to update stock for {productId}: {stockEx.Message}");
+                                }
+                            }
+                        }
+                    }
+                    // Handle single product (backward compatibility)
+                    else if (session.Metadata.ContainsKey("productId") && session.Metadata.ContainsKey("quantity"))
                     {
                         var productId = session.Metadata["productId"];
                         var quantity = int.Parse(session.Metadata["quantity"]);
-                        
-                        var productsTable = Table.LoadTable(_dynamoClient, PRODUCTS_TABLE);
-                        var product = await productsTable.GetItemAsync(productId);
-                        
-                        if (product != null && product.ContainsKey("stock"))
+
+                        var order = new Document
                         {
-                            var currentStock = product["stock"].AsInt();
-                            var newStock = Math.Max(0, currentStock - quantity);
-                            
-                            product["stock"] = newStock;
-                            await productsTable.UpdateItemAsync(product);
-                            
-                            context.Logger.LogInformation($"Stock updated for product {productId}: {currentStock} -> {newStock} (quantity ordered: {quantity})");
+                            ["orderId"] = Guid.NewGuid().ToString(),
+                            ["userId"] = userId,
+                            ["productId"] = productId,
+                            ["quantity"] = quantity,
+                            ["totalAmount"] = session.AmountTotal.Value / 100m,
+                            ["paymentStatus"] = "completed",
+                            ["orderStatus"] = "processing",
+                            ["stripeSessionId"] = session.Id,
+                            ["createdAt"] = DateTime.UtcNow.ToString("o"),
+                            ["paidAt"] = DateTime.UtcNow.ToString("o")
+                        };
+
+                        await ordersTable.PutItemAsync(order);
+                        ordersCreated++;
+                        context.Logger.LogInformation($"Order created: {order["orderId"]} for single product");
+
+                        // Update stock
+                        try
+                        {
+                            var product = await productsTable.GetItemAsync(productId);
+                            if (product != null && product.ContainsKey("stock"))
+                            {
+                                var currentStock = product["stock"].AsInt();
+                                var newStock = Math.Max(0, currentStock - quantity);
+                                product["stock"] = newStock;
+                                await productsTable.UpdateItemAsync(product);
+                                context.Logger.LogInformation($"Stock updated for {productId}: {currentStock} -> {newStock}");
+                            }
                         }
-                        else
+                        catch (Exception stockEx)
                         {
-                            context.Logger.LogWarning($"Product {productId} not found or has no stock field");
+                            context.Logger.LogError($"Failed to update stock: {stockEx.Message}");
                         }
                     }
-                    catch (Exception stockEx)
+                    else
                     {
-                        context.Logger.LogError($"Failed to update stock: {stockEx.Message}");
-                        // Don't fail the webhook if stock update fails - order is already created
+                        context.Logger.LogError($"Cannot create orders - incomplete metadata for session {session.Id}");
+                        return CreateResponse(400, new { error = "Incomplete order data" });
                     }
+
+                    context.Logger.LogInformation($"Total orders created: {ordersCreated}");
                 }
                 else
                 {
@@ -560,6 +653,13 @@ public class CheckoutRequest
 {
     public string ProductId { get; set; }
     public int? Quantity { get; set; } = 1;
+    public List<CheckoutItem> Items { get; set; }
+}
+
+public class CheckoutItem
+{
+    public string ProductId { get; set; }
+    public int Quantity { get; set; }
 }
 
 public class UpdateOrderStatusRequest

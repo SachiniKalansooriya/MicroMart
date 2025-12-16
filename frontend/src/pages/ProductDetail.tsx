@@ -3,10 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import productService, { type Product } from '../services/productService';
 import { paymentService } from '../services/paymentService';
 import { authService } from '../services/authService';
+import { useCart } from '../contexts/CartContext';
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { addToCart } = useCart();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [processingPayment, setProcessingPayment] = useState(false);
@@ -47,7 +49,9 @@ export default function ProductDetail() {
   const handleAddToCart = () => {
     if (!product) return;
     
-    // TODO: Implement cart functionality
+    addToCart(product, quantity, selectedColor);
+    
+    // Show success message
     alert(`Added ${quantity} ${product.name}${selectedColor ? ` (${selectedColor})` : ''} to cart!`);
   };
 

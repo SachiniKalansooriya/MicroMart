@@ -21,8 +21,8 @@ export default function Dashboard() {
               <span className="text-gray-600">{user?.email}</span>
             </p>
             <p className="text-gray-700">
-              <span className="font-semibold text-gray-900">User ID:</span>{' '}
-              <span className="text-gray-600">{user?.id}</span>
+              <span className="font-semibold text-gray-700">User ID:</span>
+              <span className="text-gray-600">{user?.userId}</span>
             </p>
           </div>
         </div>

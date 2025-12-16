@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 interface AdminLayoutProps {
@@ -8,7 +8,6 @@ interface AdminLayoutProps {
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const location = useLocation();
-  const navigate = useNavigate();
   const { user } = useAuth();  
   const menuItems = [
     { path: '/admin', label: 'Dashboard' },

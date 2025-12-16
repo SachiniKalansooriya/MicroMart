@@ -39,6 +39,12 @@ public class Function
 
             context.Logger.LogInformation($"Method: {method}, Path: {path}");
 
+            // Handle OPTIONS preflight requests
+            if (method == "OPTIONS")
+            {
+                return CreateResponse(200, new { message = "OK" });
+            }
+
             // Extract userId from authorizer context
             string? userId = null;
             if (request.RequestContext?.Authorizer?.Lambda?.ContainsKey("userId") == true)

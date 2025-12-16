@@ -15,6 +15,14 @@ interface Order {
   createdAt: string;
 }
 
+interface UserDetails {
+  userId: string;
+  name: string;
+  email: string;
+  role?: string;
+  createdAt?: string;
+}
+
 const ORDER_STATUSES = [
   { value: 'processing', label: 'Processing', color: 'yellow' },
   { value: 'shipped', label: 'Shipped', color: 'blue' },
@@ -29,6 +37,9 @@ export default function AdminOrders(): React.ReactElement {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
+  const [expandedUserId, setExpandedUserId] = useState<string | null>(null);
+  const [userDetails, setUserDetails] = useState<Record<string, UserDetails>>({});
+  const [loadingUserId, setLoadingUserId] = useState<string | null>(null);
 
   useEffect(() => {
     loadOrders();
@@ -100,6 +111,45 @@ export default function AdminOrders(): React.ReactElement {
   const getStatusColor = (status: string) => {
     const statusObj = ORDER_STATUSES.find(s => s.value === status);
     return statusObj?.color || 'gray';
+  };
+
+  const toggleUserDetails = async (orderId: string, userId: string) => {
+    // If already expanded, collapse it
+    if (expandedUserId === orderId) {
+      setExpandedUserId(null);
+      return;
+    }
+
+    // If user details not loaded yet, fetch them
+    if (!userDetails[userId]) {
+      try {
+        setLoadingUserId(orderId);
+        const token = localStorage.getItem('token');
+        const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://kpk440vdkf.execute-api.eu-north-1.amazonaws.com/prod';
+        
+        const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch user details');
+        }
+
+        const data = await response.json();
+        setUserDetails(prev => ({ ...prev, [userId]: data }));
+      } catch (err) {
+        console.error('Error fetching user details:', err);
+        alert('Failed to load user details');
+        return;
+      } finally {
+        setLoadingUserId(null);
+      }
+    }
+
+    setExpandedUserId(orderId);
   };
 
   if (loading) {
@@ -253,6 +303,73 @@ export default function AdminOrders(): React.ReactElement {
                           </div>
                         </div>
                       </div>
+                    </div>
+
+                    {/* User Details Button */}
+                    <div className="py-3 mt-4 border-t border-gray-200">
+                      <button
+                        onClick={() => toggleUserDetails(order.orderId, order.userId)}
+                        disabled={loadingUserId === order.orderId}
+                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-indigo-600 transition-colors rounded-lg bg-indigo-50 hover:bg-indigo-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {loadingUserId === order.orderId ? (
+                          <>
+                            <div className="w-4 h-4 border-2 border-indigo-600 rounded-full border-t-transparent animate-spin"></div>
+                            <span>Loading...</span>
+                          </>
+                        ) : (
+                          <>
+                            <svg 
+                              className={`w-4 h-4 transition-transform ${expandedUserId === order.orderId ? 'rotate-90' : ''}`} 
+                              fill="none" 
+                              stroke="currentColor" 
+                              viewBox="0 0 24 24"
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                            <span>{expandedUserId === order.orderId ? 'Hide' : 'Show'} Customer Details</span>
+                          </>
+                        )}
+                      </button>
+
+                      {/* User Details Section */}
+                      {expandedUserId === order.orderId && userDetails[order.userId] && (
+                        <div className="p-4 mt-3 border border-gray-200 rounded-lg bg-gray-50">
+                          <h4 className="mb-3 text-sm font-semibold text-gray-900">Customer Information</h4>
+                          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                            <div>
+                              <p className="text-xs text-gray-500">Customer ID</p>
+                              <p className="mt-1 font-mono text-sm text-gray-900">{userDetails[order.userId].userId}</p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-gray-500">Name</p>
+                              <p className="mt-1 text-sm font-semibold text-gray-900">{userDetails[order.userId].name}</p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-gray-500">Email</p>
+                              <p className="mt-1 text-sm text-gray-900">{userDetails[order.userId].email}</p>
+                            </div>
+                            {userDetails[order.userId].role && (
+                              <div>
+                                <p className="text-xs text-gray-500">Role</p>
+                                <p className="mt-1 text-sm text-gray-900 capitalize">{userDetails[order.userId].role}</p>
+                              </div>
+                            )}
+                            {userDetails[order.userId].createdAt && (
+                              <div>
+                                <p className="text-xs text-gray-500">Member Since</p>
+                                <p className="mt-1 text-sm text-gray-900">
+                                  {new Date(userDetails[order.userId].createdAt).toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric'
+                                  })}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     {/* Status Update Section */}

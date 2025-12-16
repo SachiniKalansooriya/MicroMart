@@ -101,7 +101,7 @@ export default function Cart() {
 
   if (cart.length === 0) {
     return (
-      <div className="min-h-screen px-4 py-12 bg-gray-50">
+      <div className="min-h-screen px-4 py-12 bg-[#d2dfe9]">
         <div className="max-w-6xl mx-auto">
           <div className="p-12 text-center bg-white shadow-lg rounded-2xl">
             <div className="inline-flex items-center justify-center w-24 h-24 mb-6 bg-gray-100 rounded-full">
@@ -121,7 +121,7 @@ export default function Cart() {
   const allSelected = selectedItems.size === cart.length;
 
   return (
-    <div className="min-h-screen px-4 py-8 bg-gray-50">
+    <div className="min-h-screen px-4 py-8 bg-[#d2dfe9]">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
@@ -297,9 +297,7 @@ export default function Cart() {
                   </>
                 ) : (
                   <>
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
+                   
                     Buy Now ({getSelectedCount()} {getSelectedCount() === 1 ? 'item' : 'items'})
                   </>
                 )}

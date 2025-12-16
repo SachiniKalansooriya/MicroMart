@@ -142,7 +142,7 @@ export default function AdminDashboard() {
             <div className="space-y-3">
               <button
                 onClick={() => navigate('/admin/products')}
-                className="flex items-center justify-between w-full p-4 transition-colors rounded-lg bg-indigo-50 hover:bg-indigo-100"
+                className="flex items-center justify-between w-full p-4 transition-colors rounded-lg bg-indigo-50 hover:bg-[#B3CFE5]"
               >
                 <div className="flex items-center space-x-3">
                 
@@ -152,7 +152,7 @@ export default function AdminDashboard() {
               </button>
               <button
                 onClick={() => navigate('/admin/orders')}
-                className="flex items-center justify-between w-full p-4 transition-colors rounded-lg bg-indigo-50 hover:bg-green-100"
+                className="flex items-center justify-between w-full p-4 transition-colors rounded-lg bg-indigo-50 hover:bg-[#B3CFE5]"
               >
                 <div className="flex items-center space-x-3">
               
@@ -162,7 +162,7 @@ export default function AdminDashboard() {
               </button>
               <button
                 onClick={() => navigate('/admin/customers')}
-                className="flex items-center justify-between w-full p-4 transition-colors rounded-lg bg-indigo-50 hover:bg-purple-100"
+                className="flex items-center justify-between w-full p-4 transition-colors rounded-lg bg-indigo-50 hover:bg-[#B3CFE5]"
               >
                 <div className="flex items-center space-x-3">
                 

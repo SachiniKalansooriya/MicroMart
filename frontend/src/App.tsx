@@ -33,7 +33,7 @@ function App() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
+     <div className="flex flex-col min-h-screen bg-[#e2f3ff]" >
       <nav className="fixed top-0 left-0 right-0 z-50 text-white shadow-lg" style={{ backgroundColor: '#0A1931' }}>
         <div className="max-w-full px-4 mx-auto sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">

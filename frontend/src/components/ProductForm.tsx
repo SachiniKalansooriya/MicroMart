@@ -82,15 +82,26 @@ export default function ProductForm({ onSubmit, onCancel, initialData, isEditing
 
   const handleAddColor = () => {
     if (newColor.trim()) {
-      const colorName = newColor.trim();
-      if (!formData.colors?.includes(colorName)) {
+      // Split by comma and trim each color
+      const colorsToAdd = newColor
+        .split(',')
+        .map(color => color.trim())
+        .filter(color => color.length > 0);
+      
+      // Add only new colors that aren't already in the list
+      const uniqueNewColors = colorsToAdd.filter(
+        color => !formData.colors?.includes(color)
+      );
+      
+      if (uniqueNewColors.length > 0) {
         setFormData({
           ...formData,
-          colors: [...(formData.colors || []), colorName],
+          colors: [...(formData.colors || []), ...uniqueNewColors],
         });
         setNewColor('');
+        setError('');
       } else {
-        setError('This color has already been added');
+        setError('All colors have already been added');
         setTimeout(() => setError(''), 3000);
       }
     }
@@ -150,21 +161,21 @@ export default function ProductForm({ onSubmit, onCancel, initialData, isEditing
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="bg-white rounded-lg shadow-lg p-6">
-        <h3 className="text-2xl font-bold text-gray-900 mb-6">
+      <div className="p-6 bg-white rounded-lg shadow-lg">
+        <h3 className="mb-6 text-2xl font-bold text-gray-900">
           {isEditing ? 'Edit Product' : 'Add New Product'}
         </h3>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
+          <div className="px-4 py-3 mb-4 text-red-700 border border-red-200 rounded-lg bg-red-50">
             {error}
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {/* Product Name */}
           <div className="md:col-span-2">
-            <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2">
+            <label htmlFor="name" className="block mb-2 text-sm font-semibold text-gray-700">
               Product Name *
             </label>
             <input
@@ -181,14 +192,14 @@ export default function ProductForm({ onSubmit, onCancel, initialData, isEditing
 
           {/* Price */}
           <div>
-            <label htmlFor="price" className="block text-sm font-semibold text-gray-700 mb-2">
+            <label htmlFor="price" className="block mb-2 text-sm font-semibold text-gray-700">
               Price ($) *
             </label>
             <input
               id="price"
               name="price"
               type="number"
-              step="0.01"
+              step="0.1"
               min="0"
               value={formData.price}
               onChange={handleChange}
@@ -200,7 +211,7 @@ export default function ProductForm({ onSubmit, onCancel, initialData, isEditing
 
           {/* Stock */}
           <div>
-            <label htmlFor="stock" className="block text-sm font-semibold text-gray-700 mb-2">
+            <label htmlFor="stock" className="block mb-2 text-sm font-semibold text-gray-700">
               Stock Quantity *
             </label>
             <input
@@ -218,7 +229,7 @@ export default function ProductForm({ onSubmit, onCancel, initialData, isEditing
 
           {/* Category */}
           <div className="md:col-span-2">
-            <label htmlFor="category" className="block text-sm font-semibold text-gray-700 mb-2">
+            <label htmlFor="category" className="block mb-2 text-sm font-semibold text-gray-700">
               Category *
             </label>
             <select
@@ -227,7 +238,7 @@ export default function ProductForm({ onSubmit, onCancel, initialData, isEditing
               value={formData.category}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white"
+              className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
             >
               <option value="">Select a category</option>
               {categories.map((cat) => (
@@ -240,7 +251,7 @@ export default function ProductForm({ onSubmit, onCancel, initialData, isEditing
 
           {/* Description */}
           <div className="md:col-span-2">
-            <label htmlFor="description" className="block text-sm font-semibold text-gray-700 mb-2">
+            <label htmlFor="description" className="block mb-2 text-sm font-semibold text-gray-700">
               Description
             </label>
             <textarea
@@ -256,8 +267,8 @@ export default function ProductForm({ onSubmit, onCancel, initialData, isEditing
 
           {/* Available Colors */}
           <div className="md:col-span-2">
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Available Colors
+            <label className="block mb-2 text-sm font-semibold text-gray-700">
+              Available Colors (Customers will choose one)
             </label>
             <div className="space-y-3">
               <div className="flex gap-2">
@@ -266,56 +277,60 @@ export default function ProductForm({ onSubmit, onCancel, initialData, isEditing
                   value={newColor}
                   onChange={(e) => setNewColor(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Enter color name (e.g., Red, Blue, Black)"
+                  placeholder="Enter color(s) separated by commas (e.g., Red, Blue, Black)"
                   className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 />
                 <button
                   type="button"
                   onClick={handleAddColor}
-                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-colors"
+                  className="px-4 py-2 font-medium text-white transition-colors rounded-lg bg-[#1A3D63] hover:bg-[#2a5a8e]"
                 >
                   Add Color
                 </button>
               </div>
               
               {formData.colors && formData.colors.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {formData.colors.map((color) => (
-                    <span
-                      key={color}
-                      className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm font-medium"
-                    >
-                      {color}
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveColor(color)}
-                        className="hover:text-indigo-600"
+                <div className="p-3 rounded-lg bg-gray-50">
+                  <p className="mb-2 text-xs font-semibold text-gray-600">Available Colors:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {formData.colors.map((color) => (
+                      <span
+                        key={color}
+                        className="inline-flex items-center gap-2 px-3 py-1 text-sm font-medium text-indigo-800 bg-indigo-100 rounded-full"
                       >
-                        ✕
-                      </button>
-                    </span>
-                  ))}
+                        {color}
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveColor(color)}
+                          className="hover:text-indigo-600"
+                          aria-label={`Remove ${color}`}
+                        >
+                          ✕
+                        </button>
+                      </span>
+                    ))}
+                  </div>
                 </div>
               )}
               
               <p className="text-xs text-gray-500">
-                Add color options that customers can choose from when purchasing this product.
+                💡 <strong>Tip:</strong> Add multiple colors at once by separating them with commas. Customers will select one color when purchasing.
               </p>
             </div>
           </div>
 
           {/* Image Upload */}
           <div className="md:col-span-2">
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block mb-2 text-sm font-semibold text-gray-700">
               Product Image
             </label>
             
             <div className="space-y-4">
               {/* File Input */}
               <div className="flex items-center space-x-4">
-                <label className="flex-1 flex items-center justify-center px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-indigo-500 transition-colors">
+                <label className="flex items-center justify-center flex-1 px-4 py-3 transition-colors border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:border-indigo-500">
                   <div className="text-center">
-                    <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                    <svg className="w-12 h-12 mx-auto text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
                       <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                     <p className="mt-1 text-sm text-gray-600">
@@ -338,40 +353,38 @@ export default function ProductForm({ onSubmit, onCancel, initialData, isEditing
                   <img
                     src={imagePreview}
                     alt="Product preview"
-                    className="h-40 w-40 object-cover rounded-lg border-2 border-gray-300"
+                    className="object-cover w-40 h-40 border-2 border-gray-300 rounded-lg"
                   />
                   <button
                     type="button"
                     onClick={handleRemoveImage}
-                    className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1 hover:bg-red-700 transition-colors"
+                    className="absolute p-1 text-white transition-colors bg-red-600 rounded-full -top-2 -right-2 hover:bg-red-700"
                   >
-                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   </button>
                 </div>
               )}
 
-              <p className="text-xs text-gray-500">
-                Note: Image will be uploaded to AWS S3. Make sure S3 bucket is configured.
-              </p>
+             
             </div>
           </div>
         </div>
 
         {/* Form Actions */}
-        <div className="flex items-center justify-end space-x-4 mt-8 pt-6 border-t">
+        <div className="flex items-center justify-end pt-6 mt-8 space-x-4 border-t">
           <button
             type="button"
             onClick={onCancel}
-            className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors"
+            className="px-6 py-2 font-medium text-gray-700 transition-colors border border-gray-300 rounded-lg hover:bg-gray-50"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white rounded-lg font-medium transition-colors"
+            className="px-6 py-2 font-medium text-white transition-colors rounded-lg bg-[#1A3D63]  disabled:bg-[#376ca4]"
           >
             {loading ? 'Saving...' : isEditing ? 'Update Product' : 'Add Product'}
           </button>

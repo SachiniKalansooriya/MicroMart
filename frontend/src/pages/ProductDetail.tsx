@@ -49,6 +49,12 @@ export default function ProductDetail() {
   const handleAddToCart = () => {
     if (!product) return;
     
+    // Validate color selection if product has colors
+    if (product.colors && product.colors.length > 0 && !selectedColor) {
+      alert('Please select a color before adding to cart');
+      return;
+    }
+    
     addToCart(product, quantity, selectedColor);
     
     // Show success message
@@ -57,6 +63,12 @@ export default function ProductDetail() {
 
   const handleBuyNow = async () => {
     if (!product) return;
+    
+    // Validate color selection if product has colors
+    if (product.colors && product.colors.length > 0 && !selectedColor) {
+      alert('Please select a color before purchasing');
+      return;
+    }
     
     // Check if user is logged in
     if (!authService.isAuthenticated()) {
@@ -136,9 +148,9 @@ export default function ProductDetail() {
   }
 
   return (
-    <div className="max-w-6xl px-4 py-8 mx-auto">
-      <div className="overflow-hidden bg-white shadow-xl rounded-2xl">
-        <div className="grid grid-cols-1 gap-6 p-6 lg:grid-cols-2">
+    <div className="px-4 py-8 mx-auto max-w-7xl">
+      <div className="overflow-hidden bg-[#eff6fb] shadow-xl rounded-2xl">
+        <div className="grid grid-cols-1 gap-8 p-8 lg:grid-cols-2 lg:gap-12">
           {/* Product Image Gallery */}
           <div className="space-y-4">
             <div className="relative flex items-center justify-center overflow-hidden bg-gray-50 rounded-xl h-80">
@@ -223,7 +235,7 @@ export default function ProductDetail() {
                 ${product.price.toFixed(2)}
               </span>
               {product.stock > 0 ? (
-                <span className="text-sm font-semibold text-green-600">
+                <span className="text-sm font-semibold text-[#4A7FA7]">
                   ✓ In Stock ({product.stock} available)
                 </span>
               ) : (
@@ -247,26 +259,29 @@ export default function ProductDetail() {
             {product.colors && product.colors.length > 0 && (
               <div className="pt-4 border-t border-gray-200">
                 <h2 className="mb-2 text-sm font-semibold tracking-wide text-gray-900 uppercase">
-                  Available Colors
+                  Available Colors <span className="text-red-500">*</span>
                 </h2>
-                <div className="flex flex-wrap gap-2">
+                <select
+                  value={selectedColor}
+                  onChange={(e) => setSelectedColor(e.target.value)}
+                  className={`w-full px-4 py-2.5 text-sm font-medium bg-white border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all ${
+                    selectedColor ? 'text-gray-700 border-gray-300' : 'text-gray-400 border-red-300'
+                  }`}
+                >
+                  <option value="" disabled>Select a color</option>
                   {product.colors.map((color) => (
-                    <button
-                      key={color}
-                      onClick={() => setSelectedColor(color)}
-                      className={`px-3 py-1.5 text-sm rounded-lg font-medium transition-all ${
-                        selectedColor === color
-                          ? 'bg-indigo-600 text-white ring-2 ring-indigo-600 ring-offset-2'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
-                    >
+                    <option key={color} value={color} className="text-gray-700">
                       {color}
-                    </button>
+                    </option>
                   ))}
-                </div>
-                {selectedColor && (
-                  <p className="mt-2 text-xs text-gray-600">
+                </select>
+                {selectedColor ? (
+                  <p className="mt-2 text-sm text-gray-600">
                     Selected: <span className="font-semibold text-indigo-600">{selectedColor}</span>
+                  </p>
+                ) : (
+                  <p className="mt-2 text-sm text-red-600">
+                    Please select a color to continue
                   </p>
                 )}
               </div>
@@ -309,17 +324,15 @@ export default function ProductDetail() {
                 <button
                   onClick={handleAddToCart}
                   disabled={product.stock === 0}
-                  className="flex-1 px-4 py-2.5 text-sm font-bold text-white transition-all bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="flex-1 px-4 py-2.5 text-sm font-bold text-black transition-all bg-[#B3CFE5] rounded-lg  disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
+                
                   Add to Cart
                 </button>
                 <button
                   onClick={handleBuyNow}
                   disabled={product.stock === 0 || processingPayment}
-                  className="flex-1 px-4 py-2.5 text-sm font-bold text-white transition-all bg-green-600 rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="flex-1 px-4 py-2.5 text-sm font-bold text-white transition-all bg-[#4A7FA7] rounded-lg  disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {processingPayment ? (
                     <>
@@ -331,9 +344,7 @@ export default function ProductDetail() {
                     </>
                   ) : (
                     <>
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                      </svg>
+                      
                       Buy Now
                     </>
                   )}

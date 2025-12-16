@@ -87,7 +87,7 @@ export default function ProductsPage() {
                 </div>
                 <button
                   onClick={() => setShowForm(true)}
-                  className="flex items-center px-6 py-3 space-x-2 font-semibold text-white transition-colors bg-blue-800 rounded-lg "
+                  className="flex items-center px-6 py-3 space-x-2 font-semibold text-white transition-colors bg-[#1A3D63] rounded-lg "
                 >
                   <span className="text-xl">+</span>
                   <span>Add Product</span>
@@ -98,11 +98,11 @@ export default function ProductsPage() {
               <div className="grid grid-cols-1 gap-4 mb-6 md:grid-cols-4">
                 <div className="p-4 bg-white rounded-lg shadow">
                   <p className="text-sm text-gray-600">Total Products</p>
-                  <p className="text-2xl font-bold text-indigo-600">{products.length}</p>
+                  <p className="text-2xl font-bold text-[#4A7FA7]">{products.length}</p>
                 </div>
                 <div className="p-4 bg-white rounded-lg shadow">
                   <p className="text-sm text-gray-600">In Stock</p>
-                  <p className="text-2xl font-bold text-green-600">
+                  <p className="text-2xl font-bold text-[#4A7FA7]">
                     {products.filter((p) => p.stock > 0).length}
                   </p>
                 </div>
@@ -114,7 +114,7 @@ export default function ProductsPage() {
                 </div>
                 <div className="p-4 bg-white rounded-lg shadow">
                   <p className="text-sm text-gray-600">Categories</p>
-                  <p className="text-2xl font-bold text-purple-600">{categories.length}</p>
+                  <p className="text-2xl font-bold text-[#4A7FA7]">{categories.length}</p>
                 </div>
               </div>
 
@@ -126,14 +126,14 @@ export default function ProductsPage() {
                     placeholder="Search products..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3D63] focus:border-transparent"
                   />
                 </div>
                 <div className="w-full md:w-64">
                   <select
                     value={filterCategory}
                     onChange={(e) => setFilterCategory(e.target.value)}
-                    className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3D63] focus:border-transparent"
                   >
                     <option value="">All Categories</option>
                     {categories.map((cat) => (
@@ -170,7 +170,7 @@ export default function ProductsPage() {
                 {!searchTerm && !filterCategory && (
                   <button
                     onClick={() => setShowForm(true)}
-                    className="px-6 py-2 font-medium text-white transition-colors bg-indigo-600 rounded-lg hover:bg-indigo-700"
+                    className="px-6 py-2 font-medium text-white transition-colors bg-[#1A3D63] rounded-lg"
                   >
                     Add Product
                   </button>

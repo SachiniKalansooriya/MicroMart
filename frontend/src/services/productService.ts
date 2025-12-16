@@ -72,15 +72,24 @@ const authFetch = async <T = any>(url: string, options: FetchOptions = {}): Prom
   return response.json();
 };
 
+// Helper function to parse colors from string to array
+const parseProductColors = (product: Product): Product => {
+  if (product.colors && typeof product.colors === 'string') {
+    product.colors = (product.colors as any).split(',').map((c: string) => c.trim()).filter((c: string) => c.length > 0);
+  }
+  return product;
+};
+
 export const productService = {
   async getProducts(): Promise<Product[]> {
     const response = await authFetch<ProductResponse>(`${API_BASE_URL}/products`);
-    return response.products || [];
+    const products = response.products || [];
+    return products.map(parseProductColors);
   },
 
   async getProduct(id: string): Promise<Product> {
     const response = await authFetch<ProductResponse>(`${API_BASE_URL}/products/${id}`);
-    return response.product!;
+    return parseProductColors(response.product!);
   },
 
   async createProduct(product: CreateProductData): Promise<Product> {

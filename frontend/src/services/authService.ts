@@ -1,6 +1,7 @@
 // frontend/src/services/authService.ts
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://kpk440vdkf.execute-api.eu-north-1.amazonaws.com/prod';
-console.log('API_BASE_URL:', API_BASE_URL, 'ENV:', import.meta.env.VITE_API_BASE_URL);
+import { config } from '../config/env';
+
+const API_BASE_URL = config.apiBaseUrl;
 
 export interface SignupData {
   name: string;

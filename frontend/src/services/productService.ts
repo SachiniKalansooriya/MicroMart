@@ -1,7 +1,8 @@
 // frontend/src/services/productService.ts
 import { authService } from './authService';
+import { config } from '../config/env';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://kpk440vdkf.execute-api.eu-north-1.amazonaws.com/prod';
+const API_BASE_URL = config.apiBaseUrl;
 
 export interface Product {
   productId: string;

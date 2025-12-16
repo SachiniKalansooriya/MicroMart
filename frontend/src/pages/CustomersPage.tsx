@@ -24,10 +24,8 @@ export default function CustomersPage() {
       setLoading(true);
       setError('');
       
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://kpk440vdkf.execute-api.eu-north-1.amazonaws.com/prod';
-      
       // Fetch all users from DynamoDB via API
-      const response = await fetch(`${API_BASE_URL}/admin/users`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/admin/users`, {
         headers: {
           'Authorization': `Bearer ${authService.getToken()}`,
           'Content-Type': 'application/json'

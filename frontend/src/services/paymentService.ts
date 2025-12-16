@@ -1,7 +1,6 @@
 import { authService } from './authService';
 
-// TODO: Replace with your actual Payment API Gateway URL
-const API_BASE_URL = 'https://kpk440vdkf.execute-api.eu-north-1.amazonaws.com/prod';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ;
 
 interface CheckoutSessionResponse {
   sessionId: string;

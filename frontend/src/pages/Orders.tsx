@@ -116,7 +116,7 @@ export default function Orders(): React.ReactElement {
           <p className="mb-2 font-semibold">Error loading orders:</p>
           <p>{error}</p>
           <button
-            onClick={loadOrders}
+            onClick={() => loadOrders()}
             className="px-4 py-2 mt-4 text-sm font-semibold text-white transition-colors bg-red-600 rounded hover:bg-red-700"
           >
             Try Again

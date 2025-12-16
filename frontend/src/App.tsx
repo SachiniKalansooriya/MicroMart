@@ -34,7 +34,7 @@ function App() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      <nav className="text-white bg-blue-800 shadow-lg">
+      <nav className="fixed top-0 left-0 right-0 z-50 text-white bg-blue-800 shadow-lg">
         <div className="max-w-full px-4 mx-auto sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Left side - Logo */}
@@ -117,7 +117,7 @@ function App() {
         </div>
       </nav>
 
-      <main className="flex-1">
+      <main className="flex-1 pt-16">
         <Routes>
           <Route
             path="/"

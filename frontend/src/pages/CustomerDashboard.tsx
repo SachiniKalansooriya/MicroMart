@@ -6,7 +6,7 @@ import productService, { type Product } from '../services/productService';
 
 export default function CustomerDashboard() {
   const { user } = useAuth();
-  const { addToCart, getCartCount } = useCart();
+  const { addToCart } = useCart();
   const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);

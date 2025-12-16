@@ -1,6 +1,6 @@
 import { authService } from './authService';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://kpk440vdkf.execute-api.eu-north-1.amazonaws.com/prod';
 
 interface CheckoutSessionResponse {
   sessionId: string;
@@ -14,10 +14,12 @@ interface CheckoutItem {
 
 interface Order {
   orderId: string;
+  userId: string;
   productId: string;
   quantity: number;
   totalAmount: number;
   paymentStatus: string;
+  orderStatus?: string;
   createdAt: string;
 }
 

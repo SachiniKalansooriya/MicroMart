@@ -28,7 +28,7 @@ A full-stack e-commerce platform built with React, TypeScript, AWS Lambda, and D
 - Context API for state management
 
 ### Backend
-- AWS Lambda (.NET 8 & Node.js)
+- AWS Lambda (.NET 8)
 - API Gateway (HTTP API)
 - DynamoDB
 - S3 for image storage
@@ -62,13 +62,9 @@ Create a `.env` file in the `frontend` directory:
 
 ```env
 VITE_API_BASE_URL=https://your-api-gateway-id.execute-api.your-region.amazonaws.com/prod
-VITE_STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key_here
-VITE_STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
 ```
 
-Replace with your actual values:
-- Get API Gateway URL from AWS Console
-- Get Stripe keys from [Stripe Dashboard](https://dashboard.stripe.com/test/apikeys)
+Replace with your actual API Gateway URL from AWS Console.
 
 ### 3. AWS Infrastructure Setup
 
@@ -90,15 +86,15 @@ Create the following DynamoDB tables:
 
 Deploy the following Lambda functions:
 
-1. **MicroMart-Auth-Login** (Node.js)
-2. **MicroMart-Auth-Signup** (Node.js)
-3. **MicroMart-Authorizer** (Node.js)
+1. **MicroMart-Auth-Login** (.NET 8)
+2. **MicroMart-Auth-Signup** (.NET 8)
+3. **MicroMart-Authorizer** (.NET 8)
 4. **MicroMart-Payment** (.NET 8)
    - **Environment Variables Required**:
      - `STRIPE_SECRET_KEY`: Your Stripe secret key
      - `STRIPE_WEBHOOK_SECRET`: Your Stripe webhook secret
-5. **MicroMart-Products** (Node.js)
-6. **MicroMart-Upload** (Node.js)
+5. **MicroMart-Products** (.NET 8)
+6. **MicroMart-Upload** (.NET 8)
 7. **MicroMart-Users** (.NET 8)
 
 > **Important**: Configure Stripe environment variables in AWS Lambda Console:
@@ -181,8 +177,8 @@ After deploying, create an admin user in DynamoDB:
 {
   "userId": "admin-user-id",
   "name": "Admin User",
-  "email": "admin@micromart.com",
-  "password": "hashed-password",
+  "email": "admin@gmail.com",
+  "password": "admin123",
   "role": "admin"
 }
 ```
@@ -239,31 +235,6 @@ MicroMart/
 └── README.md
 ```
 
-## Security Considerations
-
-- **Never commit** `.env` files or sensitive credentials
-- Use environment variables for all secrets
-- Enable HTTPS only in production
-- Implement rate limiting on API Gateway
-- Use AWS Secrets Manager for production secrets
-- Enable CloudWatch logging for monitoring
-- Implement proper IAM least privilege policies
-
-## License
-
-MIT
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
-
-## Support
-
-For issues and questions, please open an issue on GitHub.
 
 ## Authors
 

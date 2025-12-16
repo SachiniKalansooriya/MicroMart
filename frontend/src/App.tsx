@@ -70,9 +70,40 @@ function App() {
                       Shop
                     </Link>
                   )}
+                  {user.role === 'customer' && (
+                    <>
+                      <Link 
+                        to="/cart"
+                        className="relative p-2 transition-colors rounded-md hover:bg-indigo-700"
+                        title="My Cart"
+                      >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                      </Link>
+                      <Link 
+                        to="/orders"
+                        className="p-2 transition-colors rounded-md hover:bg-indigo-700"
+                        title="My Orders"
+                      >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                        </svg>
+                      </Link>
+                    </>
+                  )}
                   <span className="text-sm text-indigo-200">
                     ({user.role})
                   </span>
+                  <Link 
+                    to="/profile"
+                    className="flex items-center gap-2 px-3 py-2 font-medium transition-colors rounded-md hover:bg-indigo-700"
+                  >
+                    <div className="flex items-center justify-center w-10 h-10 overflow-hidden text-sm font-bold text-white border-2 border-white rounded-full shadow-lg bg-gradient-to-br from-blue-500 to-purple-600">
+                      {user.name?.[0]?.toUpperCase() || 'U'}
+                    </div>
+                   
+                  </Link>
                   <button
                     onClick={logout}
                     className="px-4 py-2 font-medium transition-colors bg-red-700 rounded-md hover:bg-red-800"

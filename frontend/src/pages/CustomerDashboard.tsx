@@ -31,43 +31,13 @@ export default function CustomerDashboard() {
   return (
     <div className="px-4 py-12 mx-auto max-w-7xl">
       <div className="p-8 bg-white rounded-lg shadow-lg">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="mb-2 text-3xl font-bold text-gray-900">
-              Customer Dashboard
-            </h2>
-            <p className="text-gray-600">
-              Welcome, <span className="font-semibold text-indigo-600">{user?.name}</span>!
-            </p>
-          </div>
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => navigate('/cart')}
-              className="relative flex items-center gap-2 px-6 py-3 font-semibold text-white transition-colors bg-green-600 rounded-lg shadow-md hover:bg-green-700 hover:shadow-lg"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
-              My Cart
-              {getCartCount() > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center ring-2 ring-white">
-                  {getCartCount()}
-                </span>
-              )}
-            </button>
-            
-            <button
-              onClick={() => navigate('/orders')}
-              className="flex items-center gap-2 px-6 py-3 font-semibold text-white transition-colors bg-indigo-600 rounded-lg shadow-md hover:bg-indigo-700 hover:shadow-lg"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-              </svg>
-              My Orders
-            </button>
-            
-           
-          </div>
+        <div className="mb-8">
+          <h2 className="mb-2 text-3xl font-bold text-gray-900">
+            Customer Dashboard
+          </h2>
+          <p className="text-gray-600">
+            Welcome, <span className="font-semibold text-indigo-600">{user?.name}</span>!
+          </p>
         </div>
 
         
@@ -160,13 +130,7 @@ export default function CustomerDashboard() {
           </div>
         )}
 
-        <div className="p-6 mt-8 border border-blue-200 rounded-lg bg-blue-50">
-          <h3 className="mb-2 text-lg font-semibold text-blue-900">👤 Customer Access</h3>
-          <p className="text-blue-800">
-            This is your customer dashboard. You can browse products and place orders. 
-            Admin features are not available for customer accounts.
-          </p>
-        </div>
+        
       </div>
     </div>
   );

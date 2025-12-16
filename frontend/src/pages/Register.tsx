@@ -24,8 +24,15 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-4xl p-8 bg-white rounded-lg shadow-lg">
+    <div 
+      className="min-h-[100vh] flex items-center justify-center px-4 py-12 bg-fixed bg-cover bg-center bg-no-repeat relative"
+      style={{ backgroundImage: "url('/register.jpg')" }}
+    >
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-black/60"></div>
+      
+      {/* Content */}
+      <div className="relative z-10 w-full max-w-4xl p-8 rounded-lg shadow-2xl bg-white/95 backdrop-blur-sm">
         <h2 className="mb-8 text-3xl font-bold text-center text-gray-900">
           Create Account
         </h2>
@@ -50,7 +57,7 @@ export default function Register() {
                 onChange={handleChange}
                 required
                 placeholder="Enter your name"
-                className="w-full px-4 py-3 transition-all border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="w-full px-4 py-3 transition-all border border-gray-400 rounded-lg outline-none focus:ring-2 focus:ring-[#B3CFE5] focus:border-transparent"
               />
             </div>
             
@@ -66,7 +73,7 @@ export default function Register() {
                 onChange={handleChange}
                 required
                 placeholder="Enter your email"
-                className="w-full px-4 py-3 transition-all border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="w-full px-4 py-3 transition-all border border-gray-400 rounded-lg outline-none focus:ring-2 focus:ring-[#B3CFE5] focus:border-transparent"
               />
             </div>
             
@@ -83,7 +90,7 @@ export default function Register() {
                 required
                 placeholder="Enter your password"
                 minLength={6}
-                className="w-full px-4 py-3 transition-all border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="w-full px-4 py-3 transition-all border border-gray-400 rounded-lg outline-none focus:ring-2 focus:ring-[#B3CFE5] focus:border-transparent"
               />
             </div>
             
@@ -98,7 +105,7 @@ export default function Register() {
                 value={form.phone}
                 onChange={handleChange}
                 placeholder="Enter your phone number"
-                className="w-full px-4 py-3 transition-all border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="w-full px-4 py-3 transition-all border border-gray-400 rounded-lg outline-none focus:ring-2 focus:ring-[#B3CFE5] focus:border-transparent"
               />
             </div>
             
@@ -114,7 +121,7 @@ export default function Register() {
                 required
                 placeholder="Enter your address"
                 rows={3}
-                className="w-full px-4 py-3 transition-all border border-gray-300 rounded-lg outline-none resize-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="w-full px-4 py-3 transition-all border border-gray-300 rounded-lg outline-none resize-none focus:ring-2 focus:ring-[#B3CFE5] focus:border-transparent"
               />
             </div>
           </div>
@@ -123,7 +130,7 @@ export default function Register() {
             <button
               type="submit"
               disabled={loading}
-              className="px-16 py-3 font-semibold text-white transition-colors bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:bg-indigo-400 disabled:cursor-not-allowed"
+              className="px-16 py-3 font-semibold text-white transition-colors bg-[#1A3D63] rounded-lg disabled:cursor-not-allowed"
             >
               {loading ? 'Creating Account...' : 'Register'}
             </button>
@@ -132,7 +139,7 @@ export default function Register() {
         
         <p className="mt-6 text-center text-gray-600">
           Already have an account?{' '}
-          <Link to="/login" className="font-semibold text-indigo-600 hover:text-indigo-700">
+          <Link to="/login" className="font-semibold tex-[#1A3D63] ">
             Login here
           </Link>
         </p>

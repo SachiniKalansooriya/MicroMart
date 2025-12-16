@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
+import { useNotification } from '../contexts/NotificationContext';
 import { paymentService } from '../services/paymentService';
 import { authService } from '../services/authService';
 
 export default function Cart() {
   const navigate = useNavigate();
   const { cart, removeFromCart, updateQuantity } = useCart();
+  const { showNotification } = useNotification();
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set(cart.map(item => item.productId)));
   const [processingPayment, setProcessingPayment] = useState(false);
 
@@ -78,7 +80,13 @@ export default function Cart() {
       const result = await paymentService.createMultiItemCheckout(itemsToBuy);
 
       if (result.url) {
-        window.location.href = result.url;
+        // Show notification before redirecting
+        showNotification('Order placed successfully! Redirecting to payment...', 'success');
+        
+        // Small delay to show notification before redirect
+        setTimeout(() => {
+          window.location.href = result.url;
+        }, 1000);
       } else {
         alert('Failed to create checkout session');
       }

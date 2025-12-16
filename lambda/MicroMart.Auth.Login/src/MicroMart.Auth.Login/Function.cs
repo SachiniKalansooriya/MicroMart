@@ -94,6 +94,7 @@ public class Function
                 email = user["email"].AsString(),
                 name = user["name"].AsString(),
                 phone = user["phone"].AsString(),
+                address = user.Contains("address") ? user["address"].AsString() : "",
                 role = user["role"].AsString(),
                 createdAt = user["createdAt"].AsString()
             };

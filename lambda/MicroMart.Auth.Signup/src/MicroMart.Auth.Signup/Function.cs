@@ -80,6 +80,7 @@ public class Function
                 ["password"] = hashedPassword,
                 ["name"] = signupRequest.Name,
                 ["phone"] = signupRequest.Phone ?? "",
+                ["address"] = signupRequest.Address ?? "",
                 ["role"] = role,
                 ["createdAt"] = DateTime.UtcNow.ToString("o"),
                 ["isActive"] = true
@@ -95,6 +96,7 @@ public class Function
                 email = user["email"].AsString(),
                 name = user["name"].AsString(),
                 phone = user["phone"].AsString(),
+                address = user["address"].AsString(),
                 role = user["role"].AsString(),
                 createdAt = user["createdAt"].AsString(),
                 isActive = user["isActive"].AsBoolean()
@@ -152,5 +154,6 @@ public class SignupRequest
     public string Password { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string? Phone { get; set; }
+    public string? Address { get; set; }
     public string? Role { get; set; }
 }

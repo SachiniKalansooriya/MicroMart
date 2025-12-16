@@ -6,8 +6,13 @@ import CustomerDashboard from './pages/CustomerDashboard'
 import ProductDetail from './pages/ProductDetail'
 import PaymentSuccess from './pages/PaymentSuccess'
 import PaymentCancel from './pages/PaymentCancel'
+import Orders from './pages/Orders'
+import AdminOrders from './pages/AdminOrders'
 import Unauthorized from './pages/Unauthorized'
 import ProductsPage from './pages/ProductsPage'
+import Profile from './pages/Profile'
+import Cart from './pages/Cart'
+import CustomersPage from './pages/CustomersPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import { useAuth } from './contexts/AuthContext'
 import { authService } from './services/authService'
@@ -29,20 +34,23 @@ function App() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      <nav className="text-white bg-indigo-600 shadow-lg">
-        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+      <nav className="text-white bg-blue-800 shadow-lg">
+        <div className="max-w-full px-4 mx-auto sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
+            {/* Left side - Logo */}
             <div className="flex-shrink-0">
               <Link to="/" className="text-2xl font-bold transition-colors hover:text-indigo-100">
-                🛒 MicroMart
+                 MicroMart
               </Link>
             </div>
-            <div className="flex items-center space-x-6">
-              <Link to="/" className="font-medium transition-colors hover:text-indigo-100">
-                Home
-              </Link>
+
+            {/* Right side - Navigation */}
+            <div className="flex items-center space-x-4">
               {!user && (
                 <>
+                  <Link to="/" className="font-medium transition-colors hover:text-indigo-100">
+                    Home
+                  </Link>
                   <Link to="/login" className="font-medium transition-colors hover:text-indigo-100">
                     Login
                   </Link>
@@ -53,25 +61,52 @@ function App() {
               )}
               {user && (
                 <>
-                  <Link to="/dashboard" className="font-medium transition-colors hover:text-indigo-100">
-                    Dashboard
-                  </Link>
                   {user.role === 'admin' && (
-                    <Link to="/admin" className="font-medium transition-colors hover:text-indigo-100">
-                      Admin
-                    </Link>
+                    <>
+                      <Link to="/dashboard" className="font-medium transition-colors hover:text-indigo-100">
+                        Dashboard
+                      </Link>
+                      <Link to="/admin" className="font-medium transition-colors hover:text-indigo-100">
+                        Admin
+                      </Link>
+                    </>
                   )}
                   {user.role === 'customer' && (
-                    <Link to="/customer" className="font-medium transition-colors hover:text-indigo-100">
-                      Shop
-                    </Link>
+                    <>
+                      <Link to="/customer" className="font-medium transition-colors hover:text-indigo-100">
+                        Shop
+                      </Link>
+                      <Link 
+                        to="/cart"
+                        className="relative p-2 transition-colors bg-gray-900 rounded-md"
+                        title="My Cart"
+                      >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                      </Link>
+                      <Link 
+                        to="/orders"
+                        className="p-2 transition-colors bg-gray-900 rounded-md"
+                        title="My Orders"
+                      >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                        </svg>
+                      </Link>
+                    </>
                   )}
-                  <span className="text-sm text-indigo-200">
-                    ({user.role})
-                  </span>
+                  <Link 
+                    to="/profile"
+                    className="flex items-center gap-2 px-3 py-2 font-medium transition-colors rounded-md "
+                  >
+                    <div className="flex items-center justify-center w-10 h-10 overflow-hidden text-sm font-bold text-white border-2 border-white rounded-full shadow-lg bg-gradient-to-br from-blue-900 to-blue-900">
+                      {user.name?.[0]?.toUpperCase() || 'U'}
+                    </div>
+                  </Link>
                   <button
                     onClick={logout}
-                    className="px-4 py-2 font-medium transition-colors bg-indigo-700 rounded-md hover:bg-indigo-800"
+                    className="px-4 py-2 font-medium transition-colors bg-red-700 rounded-md hover:bg-red-800"
                   >
                     Logout
                   </button>
@@ -161,6 +196,26 @@ function App() {
             }
           />
           
+          {/* Admin Orders route */}
+          <Route
+            path="/admin/orders"
+            element={
+              <ProtectedRoute requireAdmin>
+                <AdminOrders />
+              </ProtectedRoute>
+            }
+          />
+          
+          {/* Admin Customers route */}
+          <Route
+            path="/admin/customers"
+            element={
+              <ProtectedRoute requireAdmin>
+                <CustomersPage />
+              </ProtectedRoute>
+            }
+          />
+          
           {/* Customer-only route */}
           <Route
             path="/customer"
@@ -181,6 +236,36 @@ function App() {
             }
           />
           
+          {/* Orders route */}
+          <Route
+            path="/orders"
+            element={
+              <ProtectedRoute>
+                <Orders />
+              </ProtectedRoute>
+            }
+          />
+          
+          {/* Profile route */}
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          
+          {/* Cart route */}
+          <Route
+            path="/cart"
+            element={
+              <ProtectedRoute requireCustomer>
+                <Cart />
+              </ProtectedRoute>
+            }
+          />
+          
           {/* Payment Success route */}
           <Route
             path="/payment/success"
@@ -190,7 +275,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          
+
           {/* Payment Cancel route */}
           <Route
             path="/payment/cancel"

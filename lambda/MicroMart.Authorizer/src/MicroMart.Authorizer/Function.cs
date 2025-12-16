@@ -19,6 +19,7 @@ public class Function
         try
         {
             context.Logger.LogInformation("Authorizer invoked");
+            context.Logger.LogInformation($"Request: {JsonSerializer.Serialize(request)}");
 
             // Extract token from headers
             string token = null;
@@ -80,11 +81,14 @@ public class Function
             context.Logger.LogInformation($"Extracted claims - userId: '{userId}', email: '{email}', role: '{role}'");
             context.Logger.LogInformation($"Token valid - User: {userId}, Role: {role}");
 
-            return CreateAllowResponse(userId, email, role);
+            var response = CreateAllowResponse(userId, email, role);
+            context.Logger.LogInformation($"Returning response: {JsonSerializer.Serialize(response)}");
+            return response;
         }
         catch (Exception ex)
         {
             context.Logger.LogError($"Authorization failed: {ex.Message}");
+            context.Logger.LogError($"Stack trace: {ex.StackTrace}");
             return CreateDenyResponse();
         }
     }
@@ -94,11 +98,11 @@ public class Function
         return new AuthorizerResponse
         {
             IsAuthorized = true,
-            Context = new Dictionary<string, object>
+            Context = new Dictionary<string, string>
             {
-                { "userId", userId },
-                { "email", email },
-                { "role", role }
+                { "userId", userId ?? "" },
+                { "email", email ?? "" },
+                { "role", role ?? "" }
             }
         };
     }
@@ -127,5 +131,5 @@ public class AuthorizerResponse
     public bool IsAuthorized { get; set; }
 
     [JsonPropertyName("context")]
-    public Dictionary<string, object> Context { get; set; }
+    public Dictionary<string, string> Context { get; set; }
 }

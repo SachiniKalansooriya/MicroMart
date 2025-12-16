@@ -1,0 +1,14 @@
+{
+  "Information": [
+    "This file provides default values for deployment"
+  ],
+  "profile": "default",
+  "region": "eu-north-1",
+  "configuration": "Release",
+  "function-runtime": "dotnet8",
+  "function-memory-size": 256,
+  "function-timeout": 30,
+  "function-handler": "MicroMart.Authorizer::MicroMart.Authorizer.Function::FunctionHandler",
+  "function-name": "MicroMart-Authorizer",
+  "function-role": "arn:aws:iam::975531824312:role/MicroMart-Lambda-Role"
+}

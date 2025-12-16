@@ -3,9 +3,12 @@ import authService from '../services/authService';
 import type { LoginCredentials, RegisterData } from '../services/authService';
 
 interface User {
-  id: string;
+  userId: string;
   name: string;
   email: string;
+  phone: string;
+  role: 'admin' | 'customer';
+  createdAt: string;
 }
 
 interface AuthContextType {

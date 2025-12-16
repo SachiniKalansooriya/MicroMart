@@ -126,7 +126,7 @@ export default function Orders(): React.ReactElement {
 
       {!error && orders && orders.length === 0 ? (
         <div className="p-12 text-center bg-white rounded-lg shadow-md">
-          <div className="mb-4 text-6xl">📦</div>
+         
           <h2 className="mb-2 text-2xl font-semibold text-gray-900">No orders yet</h2>
           <p className="mb-6 text-gray-600">Start shopping to see your orders here</p>
           <button

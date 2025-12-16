@@ -252,7 +252,7 @@ export default function AdminOrders(): React.ReactElement {
                             ? 'bg-green-100 text-green-800' 
                             : 'bg-yellow-100 text-yellow-800'
                         }`}>
-                          {order.paymentStatus === 'completed' ? '✓ Paid' : '⏳ Pending'}
+                          {order.paymentStatus === 'completed' ? '✓ Paid' : ' Pending'}
                         </span>
                         <span className={`px-4 py-2 rounded-full text-sm font-semibold bg-${color}-100 text-${color}-800`}>
                           {ORDER_STATUSES.find(s => s.value === orderStatus)?.label || 'Processing'}
@@ -376,20 +376,39 @@ export default function AdminOrders(): React.ReactElement {
                     <div className="pt-4 mt-4 border-t border-gray-200">
                       <p className="mb-2 text-sm font-medium text-gray-700">Update Order Status:</p>
                       <div className="flex flex-wrap gap-2">
-                        {ORDER_STATUSES.map((status) => (
-                          <button
-                            key={status.value}
-                            onClick={() => updateOrderStatus(order.orderId, status.value)}
-                            disabled={updatingOrderId === order.orderId || orderStatus === status.value}
-                            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                              orderStatus === status.value
-                                ? `bg-${status.color}-600 text-white cursor-default`
-                                : `bg-${status.color}-50 text-${status.color}-700 hover:bg-${status.color}-100 disabled:opacity-50 disabled:cursor-not-allowed`
-                            }`}
-                          >
-                            {updatingOrderId === order.orderId ? 'Updating...' : status.label}
-                          </button>
-                        ))}
+                        {ORDER_STATUSES.map((status) => {
+                          const isActive = orderStatus === status.value;
+                          let buttonClasses = 'px-4 py-2 rounded-lg font-medium transition-colors ';
+                          
+                          if (status.value === 'processing') {
+                            buttonClasses += isActive 
+                              ? 'bg-yellow-500 text-white cursor-default'
+                              : 'bg-yellow-50 text-yellow-700 hover:bg-yellow-100 disabled:opacity-50 disabled:cursor-not-allowed';
+                          } else if (status.value === 'shipped') {
+                            buttonClasses += isActive 
+                              ? 'bg-blue-600 text-white cursor-default'
+                              : 'bg-blue-50 text-blue-700 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed';
+                          } else if (status.value === 'delivered') {
+                            buttonClasses += isActive 
+                              ? 'bg-green-600 text-white cursor-default'
+                              : 'bg-green-50 text-green-700 hover:bg-green-100 disabled:opacity-50 disabled:cursor-not-allowed';
+                          } else if (status.value === 'cancelled') {
+                            buttonClasses += isActive 
+                              ? 'bg-red-600 text-white cursor-default'
+                              : 'bg-red-50 text-red-700 hover:bg-red-100 disabled:opacity-50 disabled:cursor-not-allowed';
+                          }
+                          
+                          return (
+                            <button
+                              key={status.value}
+                              onClick={() => updateOrderStatus(order.orderId, status.value)}
+                              disabled={updatingOrderId === order.orderId || orderStatus === status.value}
+                              className={buttonClasses}
+                            >
+                              {updatingOrderId === order.orderId ? 'Updating...' : status.label}
+                            </button>
+                          );
+                        })}
                       </div>
                     </div>
                   </div>

@@ -25,14 +25,11 @@ export default function Register() {
 
   return (
     <div 
-      className="min-h-[100vh] flex items-center justify-center px-4 py-12 bg-fixed bg-cover bg-center bg-no-repeat relative"
-      style={{ backgroundImage: "url('/register.jpg')" }}
-    >
-      {/* Dark overlay */}
-      <div className="absolute inset-0 bg-black/60"></div>
+      className="min-h-[100vh] flex items-center justify-center px-4 py-12 bg-fixed  relative bg-[#d2dde5]" >
+     
       
       {/* Content */}
-      <div className="relative z-10 w-full max-w-4xl p-8 rounded-lg shadow-2xl bg-white/95 backdrop-blur-sm">
+      <div className="relative z-10 w-full max-w-4xl p-8 rounded-lg shadow-2xl bg-[#eef3f6] backdrop-blur-sm">
         <h2 className="mb-8 text-3xl font-bold text-center text-gray-900">
           Create Account
         </h2>

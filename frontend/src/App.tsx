@@ -39,7 +39,7 @@ function App() {
           <div className="flex items-center justify-between h-16">
             {/* Left side - Logo */}
             <div className="flex-shrink-0">
-              <Link to="/" className="text-2xl font-bold transition-colors hover:text-indigo-100">
+              <Link to="/" className="text-2xl font-bold transition-colors ">
                  MicroMart
               </Link>
             </div>

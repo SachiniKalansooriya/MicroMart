@@ -231,9 +231,14 @@ export default function ProductDetail() {
 
             {/* Price & Stock */}
             <div className="flex items-baseline gap-3">
-              <span className="text-3xl font-bold text-indigo-600">
-                ${product.price.toFixed(2)}
+              <span className="text-3xl font-bold text-[#1a3d63]">
+                ${(product.price * quantity).toFixed(2)}
               </span>
+              {quantity > 1 && (
+                <span className="text-sm text-gray-500">
+                  (${product.price.toFixed(2)} × {quantity})
+                </span>
+              )}
               {product.stock > 0 ? (
                 <span className="text-sm font-semibold text-[#4A7FA7]">
                   ✓ In Stock ({product.stock} available)

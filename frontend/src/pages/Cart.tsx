@@ -271,13 +271,13 @@ export default function Cart() {
                 
                 <div className="flex justify-between text-gray-600">
                   <span>Shipping:</span>
-                  <span className="font-semibold text-blue-600">Free</span>
+                  <span className="font-semibold text-[#4A7FA7]">Free</span>
                 </div>
                 
                 <div className="pt-3 mt-3 border-t border-gray-200">
                   <div className="flex justify-between text-lg">
                     <span className="font-bold text-gray-900">Total:</span>
-                    <span className="font-bold text-indigo-600">${getSelectedTotal().toFixed(2)}</span>
+                    <span className="font-bold text-[#1A3D63]">${getSelectedTotal().toFixed(2)}</span>
                   </div>
                 </div>
               </div>

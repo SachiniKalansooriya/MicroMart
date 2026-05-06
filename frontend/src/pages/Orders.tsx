@@ -131,7 +131,7 @@ export default function Orders(): React.ReactElement {
           <p className="mb-6 text-gray-600">Start shopping to see your orders here</p>
           <button
             onClick={() => navigate('/customer')}
-            className="px-6 py-3 font-semibold text-white transition-colors bg-[#e8f3fa] rounded-lg "
+            className="px-6 py-3 font-semibold text-black transition-colors bg-blue-900 rounded-lg "
           >
             Browse Products
           </button>

@@ -15,6 +15,10 @@ export default function Register() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    if (!form.phone.trim()) {
+      setError('Phone number is required.');
+      return;
+    }
     try {
       await register(form);
       navigate('/dashboard');
@@ -93,7 +97,7 @@ export default function Register() {
             
             <div>
               <label htmlFor="phone" className="block mb-2 text-sm font-semibold text-gray-700">
-                Phone (Optional)
+                Phone
               </label>
               <input
                 id="phone"
@@ -101,6 +105,7 @@ export default function Register() {
                 type="tel"
                 value={form.phone}
                 onChange={handleChange}
+                required
                 placeholder="Enter your phone number"
                 className="w-full px-4 py-3 transition-all border border-gray-400 rounded-lg outline-none focus:ring-2 focus:ring-[#B3CFE5] focus:border-transparent"
               />

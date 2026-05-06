@@ -7,7 +7,7 @@ export interface SignupData {
   name: string;
   email: string;
   password: string;
-  phone?: string;
+  phone: string;
   address?: string;
   role?: 'admin' | 'customer';
 }
@@ -16,7 +16,7 @@ export interface RegisterData {
   name: string;
   email: string;
   password: string;
-  phone?: string;
+  phone: string;
   address?: string;
   role?: 'admin' | 'customer';
 }

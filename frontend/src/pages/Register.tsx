@@ -9,7 +9,9 @@ export default function Register() {
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    const nextValue = name === 'phone' ? value.replace(/\D+/g, '') : value;
+    setForm({ ...form, [name]: nextValue });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -106,6 +108,8 @@ export default function Register() {
                 value={form.phone}
                 onChange={handleChange}
                 required
+                inputMode="numeric"
+                pattern="[0-9]*"
                 placeholder="Enter your phone number"
                 className="w-full px-4 py-3 transition-all border border-gray-400 rounded-lg outline-none focus:ring-2 focus:ring-[#B3CFE5] focus:border-transparent"
               />

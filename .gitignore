@@ -33,3 +33,5 @@ Thumbs.db
 # Test files
 test-*.json
 test-*.ps1
+.vercel
+.env*.local
